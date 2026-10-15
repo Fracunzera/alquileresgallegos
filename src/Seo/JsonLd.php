@@ -46,6 +46,7 @@ final class JsonLd
             'numberOfRooms' => $aviso['ambientes'] !== null ? (int) $aviso['ambientes'] : null,
             'numberOfBedrooms' => $aviso['dormitorios'] !== null ? (int) $aviso['dormitorios'] : null,
             'numberOfBathroomsTotal' => $aviso['banos'] !== null ? (int) $aviso['banos'] : null,
+            'petsAllowed' => match ($aviso['acepta_mascotas'] ?? null) { 'si' => true, 'no' => false, default => null },
             'address' => $direccion,
             'containedInPlace' => $aviso['barrio_nombre'] ? ['@type' => 'Place', 'name' => $aviso['barrio_nombre'] . ', Río Gallegos'] : null,
             'geo' => $mapa ? ['@type' => 'GeoCoordinates', 'latitude' => $mapa['lat'], 'longitude' => $mapa['lng']] : null,

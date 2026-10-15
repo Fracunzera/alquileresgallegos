@@ -18,6 +18,9 @@ final class SeoController
      */
     public function sitemap(): string
     {
+        if (!\App\Seguridad::indexable()) {
+            throw new \App\NoEncontrado();
+        }
         header('Content-Type: application/xml; charset=utf-8');
         header('Cache-Control: public, max-age=3600');
 
@@ -76,6 +79,10 @@ final class SeoController
     {
         header('Content-Type: text/plain; charset=utf-8');
         header('Cache-Control: public, max-age=86400');
+        if (!\App\Seguridad::indexable()) {
+            // Sitio de prueba: se permite rastrear para que Google vea el noindex de cada página.
+            return "User-agent: *\nDisallow:\n";
+        }
         return implode("\n", [
             'User-agent: *',
             'Disallow: /admin',

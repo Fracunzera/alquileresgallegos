@@ -23,7 +23,9 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
 <?php if ($meta->canonical !== null): ?>
 <link rel="canonical" href="<?= e(url_abs($meta->canonical)) ?>">
 <?php endif ?>
-<?php if (!$meta->indexar): ?>
+<?php if (!App\Seguridad::indexable()): ?>
+<meta name="robots" content="noindex,nofollow">
+<?php elseif (!$meta->indexar): ?>
 <meta name="robots" content="noindex,follow">
 <?php endif ?>
 <?php if ($meta->prev !== null): ?>
@@ -59,6 +61,9 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
   data-mapa-atribucion="<?= e(App\Config::get('MAPA_ATRIBUCION', '&copy; OpenStreetMap')) ?>"
   data-mapa-lat="<?= e(App\Config::get('MAPA_CENTRO_LAT', '-51.6230')) ?>"
   data-mapa-lng="<?= e(App\Config::get('MAPA_CENTRO_LNG', '-69.2168')) ?>">
+<?php if (!App\Seguridad::indexable()): ?>
+<p class="aviso-prueba">Versión de prueba: los avisos pueden no ser reales.</p>
+<?php endif ?>
 <header class="cabecera">
   <div class="contenedor cabecera-fila">
     <a class="logo" href="/"><span class="logo-marca" aria-hidden="true">⌂</span> Alquileres <strong>Río Gallegos</strong></a>
@@ -70,6 +75,7 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
     <a href="/departamentos-alquiler-rio-gallegos">Departamentos</a>
     <a href="/casas-alquiler-rio-gallegos">Casas</a>
     <a href="/monoambientes-rio-gallegos">Monoambientes</a>
+    <a href="/alquileres-con-mascotas-rio-gallegos">Con mascotas</a>
     <a href="/cuenta" rel="nofollow">Mi cuenta</a>
   </nav>
 </header>

@@ -66,6 +66,18 @@ $descripcion = '
     <label class="campo"><span>Dormitorios</span><input type="number" name="dormitorios" min="0" max="30" inputmode="numeric" value="<?= e($val('dormitorios')) ?>"></label>
     <label class="campo"><span>Baños</span><input type="number" name="banos" min="0" max="30" inputmode="numeric" value="<?= e($val('banos')) ?>"></label>
   </div>
+  <div class="fila">
+    <?php foreach (['acepta_mascotas' => '¿Acepta mascotas?', 'acepta_chicos' => '¿Acepta chicos?'] as $campo => $etiqueta): ?>
+    <label class="campo"><span><?= e($etiqueta) ?></span>
+      <select name="<?= $campo ?>">
+        <option value="">No informa</option>
+        <?php foreach (Catalogo::ACEPTA as $valor => $nombre): ?>
+        <option value="<?= e($valor) ?>"<?= $sel($campo, $valor) ?>><?= e($nombre) ?></option>
+        <?php endforeach ?>
+      </select>
+    </label>
+    <?php endforeach ?>
+  </div>
 </fieldset>
 
 <fieldset>

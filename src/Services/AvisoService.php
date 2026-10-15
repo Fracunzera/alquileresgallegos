@@ -18,7 +18,7 @@ final class AvisoService
 
     /** Columnas que se pueden escribir desde un formulario. */
     private const CAMPOS = [
-        'titulo', 'tipo', 'categoria', 'ambientes', 'dormitorios', 'banos', 'barrio_id', 'barrio_sugerido',
+        'titulo', 'tipo', 'categoria', 'ambientes', 'dormitorios', 'banos', 'acepta_mascotas', 'acepta_chicos', 'barrio_id', 'barrio_sugerido',
         'direccion', 'mostrar_direccion', 'lat', 'lng', 'precio', 'moneda', 'periodo', 'expensas', 'descripcion',
         'contacto_whatsapp', 'contacto_telefono', 'contacto_email', 'mostrar_email', 'publicador', 'inmobiliaria_id',
         'destacado', 'fuente_url', 'cuenta_id',
@@ -58,6 +58,9 @@ final class AvisoService
         $d['ambientes'] = $entero('ambientes', 30);
         $d['dormitorios'] = $entero('dormitorios', 30);
         $d['banos'] = $entero('banos', 30);
+        foreach (['acepta_mascotas', 'acepta_chicos'] as $campo) {
+            $d[$campo] = isset(Catalogo::ACEPTA[$txt($campo)]) ? $txt($campo) : null;
+        }
 
         // Barrio: de la lista. En /publicar se puede elegir "otro" y escribirlo; se asigna al moderar.
         $barrio = $txt('barrio_id');

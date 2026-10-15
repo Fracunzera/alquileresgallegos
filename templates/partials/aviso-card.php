@@ -27,6 +27,12 @@ $eager = !empty($eager);
     <p class="tarjeta-datos">
       <?= e(Catalogo::CATEGORIAS[$aviso['categoria']]) ?><?= $ambientes !== '' ? ' · ' . e($ambientes) : '' ?>
     </p>
+    <?php if ($aviso['acepta_mascotas'] === 'si' || $aviso['acepta_chicos'] === 'si'): ?>
+    <p class="tarjeta-etiquetas">
+      <?php if ($aviso['acepta_mascotas'] === 'si'): ?><span>Acepta mascotas</span><?php endif ?>
+      <?php if ($aviso['acepta_chicos'] === 'si'): ?><span>Acepta chicos</span><?php endif ?>
+    </p>
+    <?php endif ?>
     <p class="tarjeta-lugar"><?= e($aviso['barrio_nombre'] ?? '') ?> · <?= $aviso['tipo'] === 'temporario' ? 'Temporario' : 'Mensual' ?></p>
   </div>
 </article>

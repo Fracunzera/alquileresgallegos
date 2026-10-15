@@ -39,6 +39,7 @@ use App\Catalogo;
       <li><a href="/departamentos-alquiler-rio-gallegos">Departamentos</a></li>
       <li><a href="/casas-alquiler-rio-gallegos">Casas</a></li>
       <li><a href="/monoambientes-rio-gallegos">Monoambientes</a></li>
+      <li><a href="/alquileres-con-mascotas-rio-gallegos">Aceptan mascotas</a></li>
     </ul>
   </div>
 </section>

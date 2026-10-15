@@ -35,6 +35,15 @@ final class Seguridad
         if (self::sitioHttps()) {
             header('Strict-Transport-Security: max-age=15552000');
         }
+        if (!self::indexable()) {
+            header('X-Robots-Tag: noindex, nofollow');
+        }
+    }
+
+    /** APP_INDEXAR=0 en el sitio de prueba: nada se indexa en Google (evita contenido duplicado con el dominio final). */
+    public static function indexable(): bool
+    {
+        return Config::bool('APP_INDEXAR', true);
     }
 
     public static function csp(): string
