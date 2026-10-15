@@ -8,12 +8,14 @@ use App\Db;
 use App\Http;
 
 /**
- * Sesión del panel. Solo se inicia si ya existe la cookie (o en el login), así las páginas
- * públicas no mandan Set-Cookie y se pueden cachear.
+ * Sesión del panel de administración. La cookie de sesión es compartida con las cuentas de
+ * anunciantes (CuentaAuth): cada uno guarda sus propias claves y al salir borra solo las suyas.
+ * Solo se inicia si ya existe la cookie (o en un login), así las páginas públicas no mandan
+ * Set-Cookie y se pueden cachear.
  */
 final class Auth
 {
-    public const COOKIE = 'alq_admin';
+    public const COOKIE = 'alq_sesion';
 
     public static function iniciarSesion(): void
     {
@@ -80,8 +82,7 @@ final class Auth
     public static function logout(): void
     {
         self::iniciarSesion();
-        $_SESSION = [];
-        session_destroy();
-        setcookie(self::COOKIE, '', ['expires' => time() - 3600, 'path' => '/']);
+        unset($_SESSION['admin_id'], $_SESSION['admin_nombre']);
+        session_regenerate_id(true);
     }
 }
