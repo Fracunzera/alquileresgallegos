@@ -135,7 +135,7 @@ textarea { min-height: 160px; resize: vertical; }
 .ficha-descripcion, .ficha-mapa { background: var(--blanco); border-radius: var(--radio); padding: 16px; margin-bottom: 20px; }
 .ficha-descripcion p { overflow-wrap: anywhere; }
 .mapa { height: 260px; border-radius: 8px; background: var(--azul-claro); margin-bottom: 8px; }
-.mapa:empty { display: none; } /* sin JS queda solo el link */
+.sin-js .mapa, .sin-js .mapa-selector-bloque { display: none; } /* sin JS queda solo el link */
 .caja-contacto, .caja-publicador { background: var(--blanco); border-radius: var(--radio); padding: 16px; box-shadow: var(--sombra); margin-bottom: 16px; }
 .contacto { display: grid; gap: 8px; }
 .verificado { color: var(--verde-wa); font-weight: 600; }

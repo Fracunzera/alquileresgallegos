@@ -94,3 +94,18 @@ que no respondieron en `FRESCURA_DIAS_GRACIA` días.
 ```bash
 composer test
 ```
+
+## Mapa
+
+Quien publica marca la ubicación tocando un mapa (opcional) y elige el barrio de la lista.
+En la ficha:
+
+- si la dirección **no** es pública, las coordenadas se redondean a ~100 m en el servidor y se
+  muestra un círculo: la ubicación exacta nunca llega al HTML;
+- Leaflet (`public/assets/vendor/leaflet`, BSD-2) se carga recién cuando el mapa entra en pantalla;
+- sin JavaScript queda el link "Abrir en el mapa".
+
+Los tiles salen de `MAPA_TILES_URL`. Los de `tile.openstreetmap.org` alcanzan para el
+lanzamiento, pero su [política de uso](https://operations.osmfoundation.org/policies/tiles/) no
+admite tráfico alto: si el sitio crece, cambiar a un proveedor (MapTiler, Stadia, etc.) es solo
+editar el `.env`.

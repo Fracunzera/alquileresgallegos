@@ -11,10 +11,11 @@ try {
 $ogImagen = url_abs($meta->imagen ?? '/assets/img/og-default.png');
 ?>
 <!doctype html>
-<html lang="es-AR">
+<html lang="es-AR" class="sin-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.classList.remove('sin-js')</script>
 <title><?= e($meta->title) ?></title>
 <meta name="description" content="<?= e($meta->description) ?>">
 <?php if ($meta->canonical !== null): ?>
@@ -46,7 +47,11 @@ $ogImagen = url_abs($meta->imagen ?? '/assets/img/og-default.png');
 <script type="application/ld+json"><?= json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 <?php endforeach ?>
 </head>
-<body<?= !empty($conBarraContacto) ? ' class="con-barra-contacto"' : '' ?>>
+<body<?= !empty($conBarraContacto) ? ' class="con-barra-contacto"' : '' ?>
+  data-mapa-tiles="<?= e(App\Config::get('MAPA_TILES_URL', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png')) ?>"
+  data-mapa-atribucion="<?= e(App\Config::get('MAPA_ATRIBUCION', '&copy; OpenStreetMap')) ?>"
+  data-mapa-lat="<?= e(App\Config::get('MAPA_CENTRO_LAT', '-51.6230')) ?>"
+  data-mapa-lng="<?= e(App\Config::get('MAPA_CENTRO_LNG', '-69.2168')) ?>">
 <header class="cabecera">
   <div class="contenedor cabecera-fila">
     <a class="logo" href="/"><span class="logo-marca" aria-hidden="true">⌂</span> Alquileres <strong>Río Gallegos</strong></a>
