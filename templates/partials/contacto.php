@@ -19,7 +19,7 @@ $waUrl = $wa ? 'https://wa.me/' . $wa . '?text=' . rawurlencode($mensaje) : null
   <?php elseif ($wa): ?>
   <a class="boton boton-secundario" href="tel:+<?= e($wa) ?>">Llamar al <?= e(Telefono::mostrar($wa)) ?></a>
   <?php endif ?>
-  <?php if ($aviso['contacto_email']): ?>
+  <?php if ($aviso['contacto_email'] && $aviso['mostrar_email']): ?>
   <a class="boton boton-secundario" href="mailto:<?= e($aviso['contacto_email']) ?>?subject=<?= e(rawurlencode('Consulta por: ' . $aviso['titulo'])) ?>">Enviar email</a>
   <?php endif ?>
   <?php endif ?>

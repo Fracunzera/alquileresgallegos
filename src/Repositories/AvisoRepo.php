@@ -129,4 +129,44 @@ final class AvisoRepo
         }
         return [implode(' AND ', $condiciones), $params];
     }
+
+    /**
+     * Listado del panel (todos los estados).
+     *
+     * @return array{items: list<array<string, mixed>>, total: int}
+     */
+    public function listarAdmin(?string $estado, string $q, int $pagina, int $porPagina = 50): array
+    {
+        $condiciones = ['1 = 1'];
+        $params = [];
+        if ($estado !== null) {
+            $condiciones[] = 'a.estado = :estado';
+            $params['estado'] = $estado;
+        }
+        if ($q !== '') {
+            if (ctype_digit($q)) {
+                $condiciones[] = 'a.id = :id';
+                $params['id'] = (int) $q;
+            } else {
+                $condiciones[] = '(a.titulo LIKE :q1 OR a.descripcion LIKE :q2 OR a.contacto_whatsapp LIKE :q3)';
+                $params['q1'] = $params['q2'] = $params['q3'] = '%' . $q . '%';
+            }
+        }
+        $where = implode(' AND ', $condiciones);
+        $offset = max(0, ($pagina - 1) * $porPagina);
+        return [
+            'items' => Db::filas(self::SELECT . " WHERE {$where} ORDER BY a.actualizado_en DESC LIMIT {$porPagina} OFFSET {$offset}", $params),
+            'total' => (int) Db::valor("SELECT COUNT(*) FROM avisos a WHERE {$where}", $params),
+        ];
+    }
+
+    /** @return array<string, int> cantidad por estado */
+    public function contarPorEstado(): array
+    {
+        $conteo = array_fill_keys(array_keys(\App\Catalogo::ESTADOS), 0);
+        foreach (Db::filas('SELECT estado, COUNT(*) AS total FROM avisos GROUP BY estado') as $fila) {
+            $conteo[$fila['estado']] = (int) $fila['total'];
+        }
+        return $conteo;
+    }
 }

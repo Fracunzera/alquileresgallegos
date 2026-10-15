@@ -17,6 +17,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; font-family: var(--fuente); font-size: 1rem; line-height: 1.5; color: var(--texto); background: var(--fondo); }
 img { max-width: 100%; height: auto; display: block; }
