@@ -1,0 +1,21 @@
+# Entorno y secretos
+.env
+
+# Dependencias
+/vendor/
+
+# Datos generados en runtime
+/public/uploads/*
+!/public/uploads/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+
+# Herramientas
+.phpunit.cache/
+.phpunit.result.cache
+.idea/
+.vscode/
+.DS_Store
+*.swp

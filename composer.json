@@ -1,0 +1,31 @@
+{
+    "name": "alquileresgallegos/portal",
+    "description": "Portal de avisos de alquileres de Río Gallegos, Santa Cruz",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-gd": "*",
+        "ext-mbstring": "*",
+        "ext-fileinfo": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": { "App\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Tests\\": "tests/" }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "migrate": "php bin/migrate.php",
+        "serve": "php -S localhost:8000 -t public public/index.php"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
