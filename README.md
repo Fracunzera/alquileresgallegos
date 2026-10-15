@@ -53,6 +53,7 @@ composer install                # solo hace falta para correr los tests
 php bin/migrate.php --seed      # crea tablas y siembra los barrios
 php bin/crear-admin.php vos@dominio.com "Tu nombre"   # usuario del panel
 php bin/datos-demo.php 60       # opcional: avisos de prueba (no corre en producción)
+php bin/datos-demo.php --borrar  # borra SOLO los datos de demo (también en producción)
 composer serve                  # http://localhost:8000
 ```
 

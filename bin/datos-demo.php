@@ -4,32 +4,57 @@ declare(strict_types=1);
 
 /*
  * Carga avisos de DEMOSTRACIÓN para desarrollo (fotos generadas, inmobiliarias ficticias).
- * Se niega a correr con APP_ENV=production.
- * Uso: php bin/datos-demo.php [cantidad] [--limpiar]
+ *
+ * Uso:
+ *   php bin/datos-demo.php [cantidad]            carga avisos de demo (no corre con APP_ENV=production)
+ *   php bin/datos-demo.php [cantidad] --limpiar  borra los de demo y carga de nuevo
+ *   php bin/datos-demo.php --borrar              SOLO borra los datos de demo (corre también en producción)
+ *
+ * Los avisos de demo se reconocen por la dirección "Calle Demo …" y las inmobiliarias por el slug
+ * "demo-…": borrar nunca toca avisos ni inmobiliarias reales.
  */
 
 require __DIR__ . '/../src/bootstrap.php';
 
 use App\Config;
 use App\Db;
+use App\Services\AvisoService;
 use App\Services\Fotos;
 use App\Services\Slugger;
 
+/** Borra solo los datos de demo (avisos con fotos y estadísticas, e inmobiliarias demo sin avisos reales). */
+$borrarDemo = static function (): void {
+    $ids = array_column(Db::filas("SELECT id FROM avisos WHERE direccion LIKE 'Calle Demo %'"), 'id');
+    foreach ($ids as $id) {
+        AvisoService::borrar((int) $id);
+    }
+    $inmos = Db::run(
+        "DELETE FROM inmobiliarias WHERE slug LIKE 'demo-%'
+         AND id NOT IN (SELECT inmobiliaria_id FROM avisos WHERE inmobiliaria_id IS NOT NULL)"
+    )->rowCount();
+    echo count($ids) . " avisos de demo y {$inmos} inmobiliarias de demo borrados.\n";
+};
+
+if (in_array('--borrar', $argv, true)) {
+    $borrarDemo();
+    exit(0);
+}
+
 if (Config::get('APP_ENV') === 'production') {
-    fwrite(STDERR, "No se cargan datos de demo en producción.\n");
+    fwrite(STDERR, "No se cargan datos de demo en producción (APP_ENV=production). Para borrarlos: --borrar\n");
     exit(1);
 }
 
 if (in_array('--limpiar', $argv, true)) {
-    foreach (Db::filas('SELECT id FROM avisos') as $a) {
-        Fotos::borrarDeAviso((int) $a['id']);
-    }
-    Db::run('DELETE FROM avisos');
-    Db::run("DELETE FROM inmobiliarias WHERE slug LIKE 'demo-%'");
-    echo "Avisos de demo borrados.\n";
+    $borrarDemo();
 }
 
-$cantidad = (int) ($argv[1] ?? 40) ?: 40;
+$cantidad = 40;
+foreach (array_slice($argv, 1) as $argumento) {
+    if (ctype_digit($argumento)) {
+        $cantidad = (int) $argumento;
+    }
+}
 mt_srand(2966);
 
 $inmos = [];
