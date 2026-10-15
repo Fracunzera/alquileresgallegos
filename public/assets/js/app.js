@@ -41,8 +41,18 @@
   });
 
   // Filtros: al cambiar un select se envía el formulario (sin JS hay botón "Filtrar").
-  document.querySelectorAll('[data-filtros] select').forEach(function (select) {
-    select.addEventListener('change', function () { select.form.submit(); });
+  // Se mandan solo los filtros usados, para que la URL quede limpia (?dormitorios=2 en vez de ?tipo=&…).
+  var enviarFiltros = function (form) {
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (el.name && (el.value === '' || (el.name === 'orden' && el.value === 'recientes'))) el.disabled = true;
+    });
+    form.submit();
+  };
+  document.querySelectorAll('[data-filtros]').forEach(function (form) {
+    form.addEventListener('submit', function (ev) { ev.preventDefault(); enviarFiltros(form); });
+    form.querySelectorAll('select, input[type="checkbox"]').forEach(function (campo) {
+      campo.addEventListener('change', function () { enviarFiltros(form); });
+    });
   });
 
   // Confirmación antes de acciones destructivas (sin JS inline, para la Content-Security-Policy).

@@ -53,6 +53,14 @@ final class Landings
                 'intro' => 'Casas en alquiler en Río Gallegos publicadas por dueños directos e inmobiliarias. Cada aviso indica el barrio, la cantidad de ambientes y dormitorios, si tiene expensas y cómo contactar al anunciante. Si buscás algo puntual, filtrá por barrio o por cantidad de dormitorios.',
                 'periodo' => 'mes',
             ],
+            '/alquileres-con-mascotas-rio-gallegos' => [
+                'filtro' => ['acepta_mascotas' => 'si'],
+                'h1' => 'Alquileres que aceptan mascotas en Río Gallegos',
+                'title' => 'Alquileres que aceptan mascotas en Río Gallegos: {total} avisos',
+                'description' => '{total} casas y departamentos en alquiler en Río Gallegos que aceptan mascotas{desde}. Avisos donde se permiten perros y gatos, con contacto directo por WhatsApp.',
+                'intro' => 'Casas, departamentos y monoambientes en alquiler en Río Gallegos donde se aceptan mascotas. Conseguir un alquiler que acepte perros o gatos suele ser lo más difícil de la búsqueda: acá aparecen solo los avisos en los que el dueño o la inmobiliaria indicó que las acepta. Al consultar, confirmá si hay condiciones, como la cantidad o el tamaño de los animales.',
+                'periodo' => 'mes',
+            ],
             '/monoambientes-rio-gallegos' => [
                 'filtro' => ['categoria' => 'monoambiente'],
                 'h1' => 'Monoambientes en alquiler en Río Gallegos',

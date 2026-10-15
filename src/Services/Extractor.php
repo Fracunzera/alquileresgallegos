@@ -72,6 +72,24 @@ final class Extractor
             $d['precio'] = (int) $m[1] * 1000;
         }
 
+        $mascotas = self::acepta(
+            $plano,
+            '(mascotas?|animales|perros?|gatos?)',
+            '/\b(pet ?friendly|apto mascotas?)\b/'
+        );
+        if ($mascotas !== null) {
+            $d['acepta_mascotas'] = $mascotas;
+        }
+        $chicos = self::acepta(
+            $plano,
+            '(ninos|chicos|menores|criaturas|nenes)',
+            '/\b(apto (para )?(familias|chicos|ninos))\b/',
+            '/\b(solo adultos|sin hijos|pareja sin hijos)\b/'
+        );
+        if ($chicos !== null) {
+            $d['acepta_chicos'] = $chicos;
+        }
+
         if (preg_match('/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/', $t, $m)) {
             $d['contacto_email'] = $m[0];
         }
@@ -103,5 +121,27 @@ final class Extractor
         }
 
         return $d;
+    }
+
+    /**
+     * "no se aceptan mascotas" → no; "mascotas a consultar" → consultar; "se aceptan mascotas" → si.
+     * Se busca primero la negación para que "no acepta mascotas" no se lea como "acepta mascotas".
+     */
+    private static function acepta(string $plano, string $sujeto, string $siExtra, ?string $noExtra = null): ?string
+    {
+        $negacion = '/\b(no se (aceptan|permiten|admiten)|no (acepta|aceptamos|aceptan|permite|permitimos|se aceptan)|sin)\s+' . $sujeto . '\b'
+            . '|\b' . $sujeto . ':?\s*(no|prohibid[oa]s?|no se aceptan)\b/';
+        if (preg_match($negacion, $plano) || ($noExtra !== null && preg_match($noExtra, $plano))) {
+            return 'no';
+        }
+        if (preg_match('/\b' . $sujeto . ':?\s*(a consultar|consultar)\b/', $plano)) {
+            return 'consultar';
+        }
+        $afirmacion = '/\b(se (aceptan|permiten|admiten)|acepta(mos|n)?|permite(n)?|permitimos)\s+' . $sujeto . '\b'
+            . '|\b' . $sujeto . ':?\s*(si|permitid[oa]s|bienvenid[oa]s)\b/';
+        if (preg_match($afirmacion, $plano) || preg_match($siExtra, $plano)) {
+            return 'si';
+        }
+        return null;
     }
 }

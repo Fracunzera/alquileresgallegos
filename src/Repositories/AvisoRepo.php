@@ -109,7 +109,7 @@ final class AvisoRepo
     {
         $condiciones = ["a.estado = 'activo'"];
         $params = [];
-        foreach (['tipo', 'categoria', 'barrio_id', 'inmobiliaria_id'] as $campo) {
+        foreach (['tipo', 'categoria', 'barrio_id', 'inmobiliaria_id', 'acepta_mascotas', 'acepta_chicos'] as $campo) {
             if (isset($f[$campo])) {
                 $condiciones[] = "a.{$campo} = :{$campo}";
                 $params[$campo] = $f[$campo];

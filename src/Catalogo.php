@@ -41,6 +41,9 @@ final class Catalogo
         'rechazado' => 'Rechazado',
     ];
 
+    /** Respuestas para "¿acepta mascotas / chicos?" (NULL = no informa). */
+    public const ACEPTA = ['si' => 'Sí', 'no' => 'No', 'consultar' => 'A consultar'];
+
     public const MONEDAS = ['ARS' => '$', 'USD' => 'US$'];
     public const PERIODOS = ['mes' => 'por mes', 'dia' => 'por día'];
 

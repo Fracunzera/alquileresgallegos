@@ -63,4 +63,26 @@ final class ExtractorTest extends TestCase
         $this->assertSame('info@inmo.com.ar', $d['contacto_email']);
         $this->assertArrayNotHasKey('contacto_whatsapp', $d);
     }
+
+    /** @return array<string, array{string, ?string, ?string}> */
+    public static function casosMascotasYChicos(): array
+    {
+        return [
+            'acepta ambos' => ['Depto amplio, se aceptan mascotas y se aceptan niños', 'si', 'si'],
+            'no acepta mascotas' => ['Casa con patio. NO se aceptan mascotas. Apto familias', 'no', 'si'],
+            'sin animales ni chicos' => ['Monoambiente sin mascotas, sin niños', 'no', 'no'],
+            'a consultar' => ['Mascotas a consultar. Chicos: sí', 'consultar', 'si'],
+            'pet friendly y solo adultos' => ['Pet friendly! Solo adultos', 'si', 'no'],
+            'no acepta perros' => ['No acepta perros. Ideal pareja', 'no', null],
+            'no dice nada' => ['Departamento 2 dormitorios con cochera', null, null],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('casosMascotasYChicos')]
+    public function testMascotasYChicos(string $texto, ?string $mascotas, ?string $chicos): void
+    {
+        $d = Extractor::extraer($texto);
+        $this->assertSame($mascotas, $d['acepta_mascotas'] ?? null, 'mascotas');
+        $this->assertSame($chicos, $d['acepta_chicos'] ?? null, 'chicos');
+    }
 }

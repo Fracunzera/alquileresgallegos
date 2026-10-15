@@ -231,3 +231,7 @@ textarea { min-height: 160px; resize: vertical; }
 .tarjeta-admin { background: var(--blanco); border-radius: var(--radio); padding: 16px; box-shadow: var(--sombra); margin-bottom: 16px; display: grid; gap: 8px; }
 
 .aviso-prueba { margin: 0; padding: 6px 16px; background: var(--acento); color: #2b1d05; font-size: .85rem; font-weight: 600; text-align: center; }
+
+.tarjeta-etiquetas { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.tarjeta-etiquetas span { font-size: .75rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: #e7f6ec; color: #14532d; }
+.filtros-checks { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 20px; }

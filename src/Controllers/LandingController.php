@@ -50,6 +50,7 @@ final class LandingController
                     'monoambiente' => '/monoambientes-rio-gallegos',
                 ][$q['query']['categoria']] ?? null,
                 'barrio' => Catalogo::urlBarrio($q['query']['barrio']),
+                'mascotas' => '/alquileres-con-mascotas-rio-gallegos',
                 default => null,
             };
             if ($destino !== null) {

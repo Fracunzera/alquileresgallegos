@@ -63,7 +63,7 @@ El panel de administración está en `/admin`.
 | Ruta | Qué es | Indexable |
 |---|---|---|
 | `/` | Últimos avisos, accesos, barrios e inmobiliarias | sí |
-| `/alquileres-mensuales-rio-gallegos`, `/alquiler-temporario-rio-gallegos`, `/departamentos-alquiler-rio-gallegos`, `/casas-alquiler-rio-gallegos`, `/monoambientes-rio-gallegos` | Landings con title, description e intro propios (`src/Seo/Landings.php`) | sí, si tienen avisos |
+| `/alquileres-mensuales-rio-gallegos`, `/alquiler-temporario-rio-gallegos`, `/departamentos-alquiler-rio-gallegos`, `/casas-alquiler-rio-gallegos`, `/monoambientes-rio-gallegos`, `/alquileres-con-mascotas-rio-gallegos` | Landings con title, description e intro propios (`src/Seo/Landings.php`) | sí, si tienen avisos |
 | `/alquileres-{barrio}-rio-gallegos` | Landing por barrio (intro editable en el panel) | sí, si tiene avisos |
 | `/aviso/{id}-{slug}` | Ficha. Si cambia el título, la URL vieja hace 301 | si está activo |
 | `/inmobiliaria/{slug}` | Página de la inmobiliaria con sus avisos | sí, si tiene avisos |

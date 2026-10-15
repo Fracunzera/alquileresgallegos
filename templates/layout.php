@@ -75,6 +75,7 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
     <a href="/departamentos-alquiler-rio-gallegos">Departamentos</a>
     <a href="/casas-alquiler-rio-gallegos">Casas</a>
     <a href="/monoambientes-rio-gallegos">Monoambientes</a>
+    <a href="/alquileres-con-mascotas-rio-gallegos">Con mascotas</a>
     <a href="/cuenta" rel="nofollow">Mi cuenta</a>
   </nav>
 </header>
