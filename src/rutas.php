@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Admin;
 use App\Controllers\AvisoController;
 use App\Controllers\HomeController;
 use App\Controllers\InmobiliariaController;
@@ -20,4 +21,31 @@ return static function (Router $r): void {
     $r->get('/aviso/{id:\d+}-{slug:[a-z0-9-]*}', [AvisoController::class, 'ver']);
     $r->get('/aviso/{id:\d+}', fn (string $id) => (new AvisoController())->ver($id, ''));
     $r->get('/inmobiliaria/{slug:[a-z0-9-]+}', [InmobiliariaController::class, 'ver']);
+
+    // Panel de administración
+    $r->get('/admin/login', [Admin\AuthController::class, 'form']);
+    $r->post('/admin/login', [Admin\AuthController::class, 'login']);
+    $r->post('/admin/logout', [Admin\AuthController::class, 'logout']);
+    $r->get('/admin', [Admin\AvisosController::class, 'inicio']);
+    $r->get('/admin/avisos', [Admin\AvisosController::class, 'index']);
+    $r->get('/admin/avisos/nuevo', [Admin\AvisosController::class, 'nuevo']);
+    $r->post('/admin/avisos/nuevo', [Admin\AvisosController::class, 'crear']);
+    $r->get('/admin/avisos/{id:\d+}', [Admin\AvisosController::class, 'editar']);
+    $r->post('/admin/avisos/{id:\d+}', [Admin\AvisosController::class, 'guardar']);
+    $r->post('/admin/avisos/{id:\d+}/estado', [Admin\AvisosController::class, 'estado']);
+    $r->post('/admin/avisos/{id:\d+}/destacar', [Admin\AvisosController::class, 'destacar']);
+    $r->post('/admin/avisos/{id:\d+}/fotos', [Admin\AvisosController::class, 'fotos']);
+    $r->post('/admin/avisos/{id:\d+}/borrar', [Admin\AvisosController::class, 'borrar']);
+    $r->get('/admin/inmobiliarias', [Admin\InmobiliariasController::class, 'index']);
+    $r->get('/admin/inmobiliarias/nueva', [Admin\InmobiliariasController::class, 'nueva']);
+    $r->post('/admin/inmobiliarias/nueva', [Admin\InmobiliariasController::class, 'crear']);
+    $r->get('/admin/inmobiliarias/{id:\d+}', [Admin\InmobiliariasController::class, 'editar']);
+    $r->post('/admin/inmobiliarias/{id:\d+}', [Admin\InmobiliariasController::class, 'guardar']);
+    $r->post('/admin/inmobiliarias/{id:\d+}/borrar', [Admin\InmobiliariasController::class, 'borrar']);
+    $r->get('/admin/barrios', [Admin\BarriosController::class, 'index']);
+    $r->get('/admin/barrios/nuevo', [Admin\BarriosController::class, 'nuevo']);
+    $r->post('/admin/barrios/nuevo', [Admin\BarriosController::class, 'crear']);
+    $r->get('/admin/barrios/{id:\d+}', [Admin\BarriosController::class, 'editar']);
+    $r->post('/admin/barrios/{id:\d+}', [Admin\BarriosController::class, 'guardar']);
+    $r->post('/admin/barrios/{id:\d+}/borrar', [Admin\BarriosController::class, 'borrar']);
 };
