@@ -11,35 +11,14 @@ use App\Mail\Email;
 use App\Mail\Mail;
 
 /**
- * Confirmación del email de quien publica: el aviso entra a moderación recién cuando
- * hace clic en el link. Los que no confirman en CONFIRMACION_HORAS se borran.
+ * Emails al anunciante (aviso aprobado / rechazado) y restos del formulario anónimo que existió
+ * antes de exigir cuenta: confirmación por link y limpieza de los que nunca se confirmaron.
  */
 final class Confirmacion
 {
     public static function horas(): int
     {
         return Config::int('CONFIRMACION_HORAS', 72);
-    }
-
-    /** Genera el token, lo guarda (solo el hash) y manda el email. */
-    public static function enviar(int $avisoId): bool
-    {
-        $aviso = Db::fila('SELECT id, titulo, contacto_email FROM avisos WHERE id = ?', [$avisoId]);
-        if ($aviso === null || !$aviso['contacto_email']) {
-            return false;
-        }
-        $token = bin2hex(random_bytes(24));
-        Db::run('UPDATE avisos SET token_confirmacion = ? WHERE id = ?', [hash('sha256', $token), $avisoId]);
-        $link = url_abs("/confirmar/{$avisoId}/{$token}");
-
-        return Mail::enviar(new Email(
-            $aviso['contacto_email'],
-            'Confirmá tu aviso: ' . $aviso['titulo'],
-            "¡Hola!\n\nRecibimos tu aviso \"{$aviso['titulo']}\" en " . app_nombre() . ".\n\n"
-            . "Para que lo revisemos y lo publiquemos, confirmá que este email es tuyo haciendo clic acá:\n{$link}\n\n"
-            . 'Si no lo confirmás en ' . self::horas() . " horas, el aviso se borra.\n\n"
-            . "Si no publicaste nada, ignorá este mensaje.\n\n— " . app_nombre()
-        ));
     }
 
     /** @return array<string, mixed>|null el aviso si el token corresponde a un aviso sin confirmar */
@@ -106,7 +85,7 @@ final class Confirmacion
             $aviso['contacto_email'],
             'No pudimos publicar tu aviso',
             "¡Hola!\n\nRevisamos tu aviso \"{$aviso['titulo']}\" y no lo pudimos publicar.\nMotivo: {$motivo}.\n\n"
-            . 'Si querés, podés corregirlo y volver a enviarlo desde ' . url_abs('/publicar') . "\n\n— " . app_nombre()
+            . 'Podés corregirlo y volver a enviarlo desde tu cuenta: ' . url_abs('/cuenta') . "\n\n— " . app_nombre()
         ));
     }
 }

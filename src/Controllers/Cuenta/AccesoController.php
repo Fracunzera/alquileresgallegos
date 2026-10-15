@@ -101,7 +101,10 @@ final class AccesoController
             http_response_code(404);
             return $this->render('cuenta/entrar', 'Entrar', ['valido' => false, 'nombre' => null]);
         }
-        Http::redirigir('/cuenta', 303);
+        // Si todavía no publicó nada (vino a publicar), directo al formulario.
+        $cuenta = CuentaAuth::cuenta();
+        $sinAvisos = $cuenta !== null && (int) Db::valor('SELECT COUNT(*) FROM avisos WHERE cuenta_id = ?', [$cuenta['id']]) === 0;
+        Http::redirigir($sinAvisos && Cuentas::puedePublicar($cuenta)[0] ? '/cuenta/avisos/nuevo' : '/cuenta', 303);
     }
 
     public function salir(): string

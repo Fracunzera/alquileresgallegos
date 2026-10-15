@@ -68,7 +68,7 @@ El panel de administración está en `/admin`.
 | `/alquileres-{barrio}-rio-gallegos` | Landing por barrio (intro editable en el panel) | sí, si tiene avisos |
 | `/aviso/{id}-{slug}` | Ficha. Si cambia el título, la URL vieja hace 301 | si está activo |
 | `/inmobiliaria/{slug}` | Página de la inmobiliaria con sus avisos | sí, si tiene avisos |
-| `/publicar` | Formulario público sin registro: confirmación por email y después moderación | sí |
+| `/publicar` | Cómo publicar: lleva a crear la cuenta (con sesión iniciada va directo al formulario) | sí |
 | `/aviso/{id}/denunciar` | Denuncia de un aviso (puede pausarlo solo) | no |
 | `/cuenta` | Panel del anunciante registrado (ingreso con link por email) | no |
 | `/buscar?…` | Buscador con varios filtros combinados | no |
@@ -80,8 +80,9 @@ con `rel=prev/next`.
 
 ## Cuentas de anunciantes (`/cuenta`)
 
-Para quien publica varios avisos o es inmobiliaria. Sin contraseña: se entra con un link de un solo
-uso que llega por email.
+**Para publicar hace falta una cuenta** (gratis). Sin contraseña: se entra con un link de un solo uso
+que llega por email, así que toda cuenta tiene el email confirmado. En el primer ingreso, si la
+cuenta todavía no tiene avisos, va directo al formulario de aviso nuevo.
 
 - **Mi cuenta:** lista de avisos con estado, visitas y consultas de los últimos 30 días; acciones
   "sigue disponible", "ya se alquiló", pausar, volver a publicar, editar y fotos.
@@ -106,9 +107,9 @@ anunciante, en el admin y en el mensaje de "¿sigue disponible?". Son aproximada
   la web de la inmobiliaria, tocás *Autocompletar* (detecta precio, expensas, WhatsApp, dormitorios,
   tipo, barrio…), revisás y guardás. *Guardar y cargar otro* repite tipo, barrio, contacto e
   inmobiliaria para cargar en tanda.
-- **Moderación:** lo que llega por `/publicar`, recién cuando la persona confirmó su email (los que
-  no confirman en 72 h se borran solos). Se aprueba asignando barrio si escribieron "Otro", se
-  rechaza con motivo (en los dos casos se le avisa por email) o se rechaza y se bloquea.
+- **Moderación:** avisos nuevos de cuentas no confiables. Se aprueba asignando barrio si escribieron
+  "Otro", se rechaza con motivo (en los dos casos se le avisa por email) o se rechaza y se bloquea
+  (también suspende la cuenta).
 - **Denuncias:** cada ficha tiene "Denunciar este aviso". Con una denuncia de "usan mi número", o
   con 3 desde conexiones distintas, el aviso se pausa solo hasta que lo revises.
 - **Bloqueos:** WhatsApp y email bloqueados para siempre; IP por 7 días (en los celulares muchas
@@ -144,7 +145,7 @@ anunciante, en el admin y en el mensaje de "¿sigue disponible?". Son aproximada
   15 6 * * * php /ruta/al/proyecto/bin/frescura.php >> /ruta/al/proyecto/storage/logs/frescura.log 2>&1
   ```
 
-  Además de la frescura, borra los avisos de `/publicar` que no confirmaron el email.
+  Además de la frescura, borra los avisos del formulario anónimo viejo que nunca se confirmaron.
 
 ## Sitio de prueba y paso al dominio final
 

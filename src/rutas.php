@@ -35,7 +35,6 @@ return static function (Router $r): void {
     $r->get('/robots.txt', [SeoController::class, 'robots']);
     $r->get('/publicar', [PublicarController::class, 'form']);
     $r->post('/publicar', [PublicarController::class, 'enviar']);
-    $r->get('/publicar/gracias', [PublicarController::class, 'gracias']);
     $r->get('/confirmar/{id:\d+}/{token:[a-f0-9]+}', [ConfirmarController::class, 'ver']);
     $r->post('/confirmar/{id:\d+}/{token:[a-f0-9]+}', [ConfirmarController::class, 'confirmar']);
     $r->get('/verificar/{id:\d+}/{token:[a-f0-9]+}', [VerificarController::class, 'ver']);

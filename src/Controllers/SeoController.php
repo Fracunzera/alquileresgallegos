@@ -90,7 +90,6 @@ final class SeoController
             'Disallow: /verificar/',
             'Disallow: /confirmar/',
             'Disallow: /aviso/*/denunciar',
-            'Disallow: /publicar/gracias',
             'Disallow: /buscar',
             'Disallow: /estadisticas',
             '',
