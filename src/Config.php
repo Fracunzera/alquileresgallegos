@@ -67,4 +67,14 @@ final class Config
     {
         self::$valores[$clave] = $valor;
     }
+
+    /** Clave secreta de la app (firma de tokens). */
+    public static function clave(): string
+    {
+        $clave = (string) self::get('APP_KEY', '');
+        if (strlen($clave) < 32) {
+            throw new \RuntimeException('Falta APP_KEY en .env (mínimo 32 caracteres).');
+        }
+        return $clave;
+    }
 }

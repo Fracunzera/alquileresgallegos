@@ -32,3 +32,6 @@
 .tarjeta-admin { background: var(--blanco); border-radius: var(--radio); padding: 16px; box-shadow: var(--sombra); margin-bottom: 16px; display: grid; gap: 8px; }
 .tarjeta-admin .acciones-estado { margin: 0; }
 .cita { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--fondo); border-radius: 8px; padding: 10px; font-size: .9rem; max-height: 220px; overflow: auto; }
+.fotos-moderacion { display: flex; gap: 6px; overflow-x: auto; }
+.fotos-moderacion img { width: 120px; height: 90px; object-fit: cover; border-radius: 6px; flex: none; }
+.acciones-estado select { width: auto; }

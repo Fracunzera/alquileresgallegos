@@ -45,6 +45,15 @@
     select.addEventListener('change', function () { select.form.submit(); });
   });
 
+  // Formulario de aviso: el campo "¿Qué barrio?" solo cuando eligen "Otro".
+  document.querySelectorAll('[data-barrio]').forEach(function (select) {
+    var otro = select.form.querySelector('[data-barrio-otro]');
+    if (!otro) return;
+    function actualizar() { otro.hidden = select.value !== 'otro'; }
+    select.addEventListener('change', actualizar);
+    actualizar();
+  });
+
   // Mapas (Leaflet): se cargan recién cuando el mapa entra en pantalla.
   var mapas = document.querySelectorAll('[data-mapa], [data-mapa-selector]');
   if (!mapas.length) return;

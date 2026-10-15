@@ -120,7 +120,7 @@ final class AvisoService
             $err['contacto_whatsapp'] = 'Dejá al menos un dato de contacto (idealmente WhatsApp).';
         }
         if ($publico && $d['contacto_email'] === null) {
-            $err['contacto_email'] = 'Necesitamos un email para avisarte cuando se publique y preguntarte si sigue disponible.';
+            $err['contacto_email'] = 'Necesitamos un email para contactarte por el aviso y preguntarte cada tanto si sigue disponible.';
         }
         $d['mostrar_email'] = empty($entrada['ocultar_email']) ? 1 : 0;
         if (!$d['mostrar_email'] && $d['contacto_whatsapp'] === null && $d['contacto_telefono'] === null && !isset($err['contacto_whatsapp'])) {
