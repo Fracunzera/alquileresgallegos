@@ -3,6 +3,8 @@
   <h1>Publicá tu alquiler gratis</h1>
   <p class="intro">Sin registrarte. Te llega un email para confirmar el aviso; después lo revisamos y lo publicamos, normalmente en menos de 24 horas. Te contactan directo por WhatsApp.</p>
 
+  <p class="alerta alerta-ok">¿Vas a publicar varios avisos o sos inmobiliaria? <a href="/cuenta/registro">Creá una cuenta gratis</a> y administrálos desde un panel, con estadísticas de visitas y consultas.</p>
+
   <?php if ($err): ?>
   <div class="alerta alerta-error" role="alert">
     <?php if (isset($err['general'])): ?><p><?= e($err['general']) ?></p><?php endif ?>

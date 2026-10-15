@@ -73,6 +73,15 @@
     actualizar();
   });
 
+  // Registro: el nombre de la inmobiliaria solo si eligen "inmobiliaria".
+  var soloInmo = document.querySelector('[data-solo-inmobiliaria]');
+  if (soloInmo) {
+    var radios = soloInmo.closest('form').querySelectorAll('input[name="tipo"]');
+    var actualizarInmo = function () { soloInmo.hidden = !soloInmo.closest('form').querySelector('input[name="tipo"][value="inmobiliaria"]').checked; };
+    radios.forEach(function (r) { r.addEventListener('change', actualizarInmo); });
+    actualizarInmo();
+  }
+
   // Mapas (Leaflet): se cargan recién cuando el mapa entra en pantalla.
   var mapas = document.querySelectorAll('[data-mapa], [data-mapa-selector]');
   if (!mapas.length) return;

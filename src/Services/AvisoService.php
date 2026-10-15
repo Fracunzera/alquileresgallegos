@@ -21,7 +21,7 @@ final class AvisoService
         'titulo', 'tipo', 'categoria', 'ambientes', 'dormitorios', 'banos', 'barrio_id', 'barrio_sugerido',
         'direccion', 'mostrar_direccion', 'lat', 'lng', 'precio', 'moneda', 'periodo', 'expensas', 'descripcion',
         'contacto_whatsapp', 'contacto_telefono', 'contacto_email', 'mostrar_email', 'publicador', 'inmobiliaria_id',
-        'destacado', 'fuente_url',
+        'destacado', 'fuente_url', 'cuenta_id',
     ];
 
     /**

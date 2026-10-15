@@ -11,6 +11,7 @@ use App\Seo\Meta;
 use App\Services\AvisoService;
 use App\Services\Bloqueos;
 use App\Services\Confirmacion;
+use App\Services\CuentaAuth;
 use App\Services\FormToken;
 use App\Services\Fotos;
 use App\Services\RateLimiter;
@@ -27,6 +28,9 @@ final class PublicarController
 
     public function form(): string
     {
+        if (CuentaAuth::cuenta() !== null) {
+            Http::redirigir('/cuenta/avisos/nuevo');
+        }
         return $this->render(['tipo' => 'mensual', 'periodo' => 'mes', 'moneda' => 'ARS'], []);
     }
 

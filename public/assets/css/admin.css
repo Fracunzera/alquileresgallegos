@@ -2,34 +2,20 @@
 .admin-main { padding-top: 16px; padding-bottom: 48px; }
 .globo { display: inline-block; min-width: 1.4em; padding: 0 .4em; border-radius: 999px; background: var(--acento); color: #2b1d05; font-size: .8em; font-weight: 700; text-align: center; }
 .caja-login { max-width: 380px; margin: 40px auto; }
-.titulo-con-accion { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
-.tablero { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
-.tablero-dato { background: var(--blanco); border-radius: var(--radio); padding: 16px; box-shadow: var(--sombra); text-decoration: none; color: var(--texto); }
-.tablero-dato strong { display: block; font-size: 1.8rem; }
 .tablero-alerta { outline: 2px solid var(--acento); }
 .tabla-envoltorio { overflow-x: auto; background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra); }
 .tabla { width: 100%; border-collapse: collapse; font-size: .92rem; }
 .tabla th, .tabla td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borde); vertical-align: top; }
 .tabla th { background: var(--fondo); font-size: .8rem; color: var(--texto-suave); }
-.estado { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: .8rem; font-weight: 600; background: #e5e7eb; }
-.estado-activo { background: #dcfce7; color: #14532d; }
-.estado-pendiente { background: #fef3c7; color: #78350f; }
 .estado-pausado { background: #e5e7eb; color: #374151; }
-.estado-alquilado { background: #dbeafe; color: #1e3a8a; }
-.estado-rechazado { background: #fee2e2; color: #7f1d1d; }
 .pestanas { display: flex; gap: 6px; overflow-x: auto; margin: 12px 0; }
 .pestanas a { padding: 6px 12px; border-radius: 999px; background: var(--blanco); border: 1px solid var(--borde); text-decoration: none; white-space: nowrap; font-size: .9rem; }
 .pestanas [aria-current] { background: var(--azul); color: var(--blanco); border-color: var(--azul); }
 .busqueda-admin { display: flex; gap: 8px; margin-bottom: 8px; }
 .acciones-estado { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 .botonera { display: flex; flex-wrap: wrap; gap: 8px; position: sticky; bottom: 0; background: var(--fondo); padding: 12px 0; }
-.fotos-admin { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-.fotos-admin > .boton { grid-column: 1 / -1; justify-self: start; }
-.foto-admin { background: var(--blanco); border-radius: var(--radio); padding: 8px; display: grid; gap: 6px; }
-.foto-admin img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; }
 .historial { padding-left: 18px; font-size: .9rem; }
 .zona-peligro { border-top: 1px solid var(--borde); padding-top: 16px; }
-.tarjeta-admin { background: var(--blanco); border-radius: var(--radio); padding: 16px; box-shadow: var(--sombra); margin-bottom: 16px; display: grid; gap: 8px; }
 .tarjeta-admin .acciones-estado { margin: 0; }
 .cita { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--fondo); border-radius: 8px; padding: 10px; font-size: .9rem; max-height: 220px; overflow: auto; }
 .fotos-moderacion { display: flex; gap: 6px; overflow-x: auto; }

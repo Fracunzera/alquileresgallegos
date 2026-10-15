@@ -84,7 +84,7 @@ final class Confirmacion
     /** Email al anunciante cuando se aprueba su aviso. @param array<string, mixed> $aviso */
     public static function avisarAprobado(array $aviso): void
     {
-        if ($aviso['origen'] !== 'formulario' || !$aviso['contacto_email']) {
+        if ($aviso['origen'] === 'admin' || !$aviso['contacto_email']) {
             return;
         }
         Mail::enviar(new Email(
@@ -99,7 +99,7 @@ final class Confirmacion
     /** Email al anunciante cuando se rechaza su aviso. @param array<string, mixed> $aviso */
     public static function avisarRechazado(array $aviso, string $motivo): void
     {
-        if ($aviso['origen'] !== 'formulario' || !$aviso['contacto_email']) {
+        if ($aviso['origen'] === 'admin' || !$aviso['contacto_email']) {
             return;
         }
         Mail::enviar(new Email(

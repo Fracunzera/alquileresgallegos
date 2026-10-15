@@ -70,6 +70,7 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
     <a href="/departamentos-alquiler-rio-gallegos">Departamentos</a>
     <a href="/casas-alquiler-rio-gallegos">Casas</a>
     <a href="/monoambientes-rio-gallegos">Monoambientes</a>
+    <a href="/cuenta" rel="nofollow">Mi cuenta</a>
   </nav>
 </header>
 
@@ -101,6 +102,7 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
       <h2><?= e(app_nombre()) ?></h2>
       <p>Todos los alquileres de la ciudad en un solo lugar. Publicar es gratis.</p>
       <p><a class="boton boton-chico" href="/publicar">Publicá tu aviso</a></p>
+      <p><a href="/cuenta/registro?tipo=inmobiliaria" rel="nofollow">¿Sos inmobiliaria? Creá tu cuenta</a> · <a href="/cuenta" rel="nofollow">Mi cuenta</a></p>
     </section>
   </div>
   <p class="contenedor pie-legal">© <?= date('Y') ?> <?= e(app_nombre()) ?>. Los avisos son responsabilidad de cada anunciante.</p>

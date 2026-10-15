@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\Admin;
+use App\Controllers\Cuenta;
 use App\Controllers\AvisoController;
 use App\Controllers\ConfirmarController;
 use App\Controllers\DenunciarController;
@@ -39,6 +40,23 @@ return static function (Router $r): void {
     $r->post('/confirmar/{id:\d+}/{token:[a-f0-9]+}', [ConfirmarController::class, 'confirmar']);
     $r->get('/verificar/{id:\d+}/{token:[a-f0-9]+}', [VerificarController::class, 'ver']);
     $r->post('/verificar/{id:\d+}/{token:[a-f0-9]+}', [VerificarController::class, 'responder']);
+
+    // Cuentas de anunciantes
+    $r->get('/cuenta/ingresar', [Cuenta\AccesoController::class, 'ingresarForm']);
+    $r->post('/cuenta/ingresar', [Cuenta\AccesoController::class, 'ingresar']);
+    $r->get('/cuenta/registro', [Cuenta\AccesoController::class, 'registroForm']);
+    $r->post('/cuenta/registro', [Cuenta\AccesoController::class, 'registro']);
+    $r->get('/cuenta/entrar/{token:[a-f0-9]+}', [Cuenta\AccesoController::class, 'entrarForm']);
+    $r->post('/cuenta/entrar/{token:[a-f0-9]+}', [Cuenta\AccesoController::class, 'entrar']);
+    $r->post('/cuenta/salir', [Cuenta\AccesoController::class, 'salir']);
+    $r->get('/cuenta', [Cuenta\PanelController::class, 'inicio']);
+    $r->post('/cuenta/datos', [Cuenta\PanelController::class, 'datos']);
+    $r->get('/cuenta/avisos/nuevo', [Cuenta\PanelController::class, 'nuevo']);
+    $r->post('/cuenta/avisos/nuevo', [Cuenta\PanelController::class, 'crear']);
+    $r->get('/cuenta/avisos/{id:\d+}', [Cuenta\PanelController::class, 'editar']);
+    $r->post('/cuenta/avisos/{id:\d+}', [Cuenta\PanelController::class, 'guardar']);
+    $r->post('/cuenta/avisos/{id:\d+}/fotos', [Cuenta\PanelController::class, 'fotos']);
+    $r->post('/cuenta/avisos/{id:\d+}/{accion:pausar|alquilado|reactivar|disponible}', [Cuenta\PanelController::class, 'accion']);
 
     // Panel de administración
     $r->get('/admin/login', [Admin\AuthController::class, 'form']);

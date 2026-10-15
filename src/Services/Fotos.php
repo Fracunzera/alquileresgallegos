@@ -148,6 +148,31 @@ final class Fotos
         return is_file(self::directorioBase() . '/' . $archivo . '-og.jpg') ? '/uploads/' . $archivo . '-og.jpg' : null;
     }
 
+    /**
+     * Aplica el formulario de fotos: orden[id], alt[id] y borrar[] (solo fotos de ese aviso).
+     *
+     * @param array<string, mixed> $post
+     */
+    public static function actualizarDesdeFormulario(int $avisoId, array $post): void
+    {
+        $borrar = array_map('intval', (array) ($post['borrar'] ?? []));
+        foreach ((array) ($post['orden'] ?? []) as $fotoId => $orden) {
+            if (in_array((int) $fotoId, $borrar, true)) {
+                continue;
+            }
+            $alt = trim((string) ($post['alt'][$fotoId] ?? ''));
+            Db::run(
+                'UPDATE aviso_fotos SET orden = ?, alt = ? WHERE id = ? AND aviso_id = ?',
+                [max(0, (int) $orden), $alt !== '' ? mb_substr($alt, 0, 200) : null, (int) $fotoId, $avisoId]
+            );
+        }
+        foreach ($borrar as $fotoId) {
+            if (Db::valor('SELECT id FROM aviso_fotos WHERE id = ? AND aviso_id = ?', [$fotoId, $avisoId]) !== null) {
+                self::borrar($fotoId);
+            }
+        }
+    }
+
     public static function borrar(int $fotoId): void
     {
         $foto = Db::fila('SELECT * FROM aviso_fotos WHERE id = ?', [$fotoId]);

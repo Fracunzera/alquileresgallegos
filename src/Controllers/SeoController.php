@@ -79,6 +79,7 @@ final class SeoController
         return implode("\n", [
             'User-agent: *',
             'Disallow: /admin',
+            'Disallow: /cuenta',
             'Disallow: /verificar/',
             'Disallow: /confirmar/',
             'Disallow: /aviso/*/denunciar',

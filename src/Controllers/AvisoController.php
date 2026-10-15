@@ -12,6 +12,7 @@ use App\Seo\JsonLd;
 use App\Seo\Meta;
 use App\Services\Fotos;
 use App\Services\Auth;
+use App\Services\CuentaAuth;
 use App\View;
 
 final class AvisoController
@@ -23,7 +24,8 @@ final class AvisoController
 
         // Pendientes y rechazados no existen para el público (el admin puede previsualizarlos).
         $visible = in_array($aviso['estado'], ['activo', 'pausado', 'alquilado'], true);
-        if (!$visible && !Auth::estaLogueado()) {
+        $esDuenio = $aviso['cuenta_id'] !== null && (int) (CuentaAuth::cuenta()['id'] ?? 0) === (int) $aviso['cuenta_id'];
+        if (!$visible && !Auth::estaLogueado() && !$esDuenio) {
             throw new NoEncontrado();
         }
 

@@ -144,22 +144,7 @@ final class AvisosController extends Base
     public function fotos(string $id): string
     {
         $avisoId = self::id($id);
-        $borrar = array_map('intval', (array) ($_POST['borrar'] ?? []));
-        foreach ((array) ($_POST['orden'] ?? []) as $fotoId => $orden) {
-            if (in_array((int) $fotoId, $borrar, true)) {
-                continue;
-            }
-            $alt = trim((string) ($_POST['alt'][$fotoId] ?? ''));
-            Db::run(
-                'UPDATE aviso_fotos SET orden = ?, alt = ? WHERE id = ? AND aviso_id = ?',
-                [max(0, (int) $orden), $alt !== '' ? mb_substr($alt, 0, 200) : null, (int) $fotoId, $avisoId]
-            );
-        }
-        foreach ($borrar as $fotoId) {
-            if (Db::valor('SELECT id FROM aviso_fotos WHERE id = ? AND aviso_id = ?', [$fotoId, $avisoId]) !== null) {
-                Fotos::borrar($fotoId);
-            }
-        }
+        Fotos::actualizarDesdeFormulario($avisoId, $_POST);
         Flash::ok('Fotos actualizadas.');
         Http::redirigir("/admin/avisos/{$avisoId}#fotos");
     }
