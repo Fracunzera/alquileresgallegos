@@ -53,7 +53,7 @@ final class Filtros
             $filtros['precio_max'] = (int) $precio;
             $query['precio_max'] = $precio;
         }
-        foreach (['mascotas' => 'acepta_mascotas', 'chicos' => 'acepta_chicos'] as $param => $campo) {
+        foreach (['mascotas' => 'acepta_mascotas', 'ninos' => 'acepta_ninos'] as $param => $campo) {
             if (!isset($fijos[$campo]) && Http::query($param) === '1') {
                 $filtros[$campo] = 'si';
                 $query[$param] = '1';

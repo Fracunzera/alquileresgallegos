@@ -80,14 +80,15 @@ final class Extractor
         if ($mascotas !== null) {
             $d['acepta_mascotas'] = $mascotas;
         }
-        $chicos = self::acepta(
+        // En los posteos se escribe de mil formas (niños, chicos, menores, hijos): todas van a "niños".
+        $ninos = self::acepta(
             $plano,
-            '(ninos|chicos|menores|criaturas|nenes)',
+            '(ninos|chicos|menores|criaturas|nenes|hijos)',
             '/\b(apto (para )?(familias|chicos|ninos))\b/',
             '/\b(solo adultos|sin hijos|pareja sin hijos)\b/'
         );
-        if ($chicos !== null) {
-            $d['acepta_chicos'] = $chicos;
+        if ($ninos !== null) {
+            $d['acepta_ninos'] = $ninos;
         }
 
         if (preg_match('/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/', $t, $m)) {
