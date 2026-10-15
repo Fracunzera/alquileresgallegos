@@ -7,6 +7,7 @@ use App\Controllers\AvisoController;
 use App\Controllers\HomeController;
 use App\Controllers\InmobiliariaController;
 use App\Controllers\LandingController;
+use App\Controllers\VerificarController;
 use App\Router;
 use App\Seo\Landings;
 
@@ -21,6 +22,8 @@ return static function (Router $r): void {
     $r->get('/aviso/{id:\d+}-{slug:[a-z0-9-]*}', [AvisoController::class, 'ver']);
     $r->get('/aviso/{id:\d+}', fn (string $id) => (new AvisoController())->ver($id, ''));
     $r->get('/inmobiliaria/{slug:[a-z0-9-]+}', [InmobiliariaController::class, 'ver']);
+    $r->get('/verificar/{id:\d+}/{token:[a-f0-9]+}', [VerificarController::class, 'ver']);
+    $r->post('/verificar/{id:\d+}/{token:[a-f0-9]+}', [VerificarController::class, 'responder']);
 
     // Panel de administración
     $r->get('/admin/login', [Admin\AuthController::class, 'form']);
@@ -36,6 +39,8 @@ return static function (Router $r): void {
     $r->post('/admin/avisos/{id:\d+}/destacar', [Admin\AvisosController::class, 'destacar']);
     $r->post('/admin/avisos/{id:\d+}/fotos', [Admin\AvisosController::class, 'fotos']);
     $r->post('/admin/avisos/{id:\d+}/borrar', [Admin\AvisosController::class, 'borrar']);
+    $r->get('/admin/verificacion', [Admin\VerificacionController::class, 'index']);
+    $r->post('/admin/verificacion/{id:\d+}/{accion:confirmar|solicitar|alquilado|pausar}', [Admin\VerificacionController::class, 'accion']);
     $r->get('/admin/inmobiliarias', [Admin\InmobiliariasController::class, 'index']);
     $r->get('/admin/inmobiliarias/nueva', [Admin\InmobiliariasController::class, 'nueva']);
     $r->post('/admin/inmobiliarias/nueva', [Admin\InmobiliariasController::class, 'crear']);

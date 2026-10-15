@@ -206,3 +206,4 @@ textarea { min-height: 160px; resize: vertical; }
   .con-barra-contacto { padding-bottom: 0; }
   .mapa { height: 340px; }
 }
+.pagina-angosta { max-width: 560px; padding-top: 24px; }

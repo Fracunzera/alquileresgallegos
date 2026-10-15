@@ -35,4 +35,10 @@ final class RouterTest extends TestCase
         $this->expectException(MetodoNoPermitido::class);
         $r->resolver('GET', '/publicar');
     }
+
+    public function testRechazaCuantificadoresConLlaves(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        (new Router())->get('/verificar/{token:[a-f0-9]{48}}', fn () => '');
+    }
 }

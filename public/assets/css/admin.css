@@ -31,4 +31,4 @@
 .zona-peligro { border-top: 1px solid var(--borde); padding-top: 16px; }
 .tarjeta-admin { background: var(--blanco); border-radius: var(--radio); padding: 16px; box-shadow: var(--sombra); margin-bottom: 16px; display: grid; gap: 8px; }
 .tarjeta-admin .acciones-estado { margin: 0; }
-.cita { white-space: pre-wrap; background: var(--fondo); border-radius: 8px; padding: 10px; font-size: .9rem; max-height: 220px; overflow: auto; }
+.cita { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--fondo); border-radius: 8px; padding: 10px; font-size: .9rem; max-height: 220px; overflow: auto; }

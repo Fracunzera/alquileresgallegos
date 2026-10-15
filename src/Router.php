@@ -28,7 +28,10 @@ final class Router
     /** @param list<string> $metodos @param callable|array{class-string, string} $handler */
     public function agregar(array $metodos, string $patron, callable|array $handler): void
     {
-        // {nombre} → cualquier cosa sin barra; {nombre:regex} → regex propia.
+        if (preg_match('/\{\w+:[^}]*\{/', $patron)) {
+            throw new \InvalidArgumentException("La regex de la ruta {$patron} no puede tener llaves.");
+        }
+        // {nombre} → cualquier cosa sin barra; {nombre:regex} → regex propia (sin llaves: nada de {48}).
         $regex = preg_replace_callback(
             '/\{(\w+)(?::([^}]+))?\}/',
             fn (array $m) => '(?P<' . $m[1] . '>' . ($m[2] ?? '[^/]+') . ')',
