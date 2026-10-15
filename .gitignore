@@ -7,10 +7,13 @@
 # Datos generados en runtime
 /public/uploads/*
 !/public/uploads/.gitkeep
+!/public/uploads/.htaccess
 /storage/logs/*
 !/storage/logs/.gitkeep
 /storage/cache/*
 !/storage/cache/.gitkeep
+/storage/sessions/*
+!/storage/sessions/.gitkeep
 
 # Herramientas
 .phpunit.cache/
