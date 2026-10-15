@@ -33,8 +33,9 @@ final class Config
                 $fin = strpos($valor, $comilla, 1);
                 $valor = $fin === false ? substr($valor, 1) : substr($valor, 1, $fin - 1);
             } else {
-                // Comentario al final de la línea: "VALOR   # comentario"
-                $valor = trim((string) preg_replace('/\s+#.*$/', '', $valor));
+                // Comentario al final de la línea: "VALOR   # comentario". También cuando el valor está
+                // vacío ("CLAVE=   # comentario"): ahí el # queda al principio, sin espacio adelante.
+                $valor = trim((string) preg_replace('/(^|\s+)#.*$/', '', $valor));
             }
             $valores[$clave] = $valor;
         }
