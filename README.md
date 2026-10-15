@@ -49,7 +49,7 @@ tests/             PHPUnit
 ```bash
 cp .env.example .env            # completar DB_* y APP_URL=http://localhost:8000
 composer install
-php bin/migrate.php             # crea tablas y siembra los barrios
+php bin/migrate.php --seed      # crea tablas y siembra los barrios
 php bin/crear-admin.php         # crea el usuario del panel
 composer serve                  # http://localhost:8000
 ```
