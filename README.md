@@ -47,15 +47,44 @@ tests/             PHPUnit
 ## Instalación local
 
 ```bash
-cp .env.example .env            # completar DB_* y APP_URL=http://localhost:8000
-composer install
+cp .env.example .env            # completar DB_*, APP_URL=http://localhost:8000 y APP_KEY
+php -r "echo bin2hex(random_bytes(32));"   # valor para APP_KEY
+composer install                # solo hace falta para correr los tests
 php bin/migrate.php --seed      # crea tablas y siembra los barrios
-php bin/crear-admin.php         # crea el usuario del panel
+php bin/crear-admin.php vos@dominio.com "Tu nombre"   # usuario del panel
 php bin/datos-demo.php 60       # opcional: avisos de prueba (no corre en producción)
 composer serve                  # http://localhost:8000
 ```
 
 El panel de administración está en `/admin`.
+
+## Páginas
+
+| Ruta | Qué es | Indexable |
+|---|---|---|
+| `/` | Últimos avisos, accesos, barrios e inmobiliarias | sí |
+| `/alquileres-mensuales-rio-gallegos`, `/alquiler-temporario-rio-gallegos`, `/departamentos-alquiler-rio-gallegos`, `/casas-alquiler-rio-gallegos`, `/monoambientes-rio-gallegos` | Landings con title, description e intro propios (`src/Seo/Landings.php`) | sí, si tienen avisos |
+| `/alquileres-{barrio}-rio-gallegos` | Landing por barrio (intro editable en el panel) | sí, si tiene avisos |
+| `/aviso/{id}-{slug}` | Ficha. Si cambia el título, la URL vieja hace 301 | si está activo |
+| `/inmobiliaria/{slug}` | Página de la inmobiliaria con sus avisos | sí, si tiene avisos |
+| `/publicar` | Formulario público sin registro (queda pendiente de moderación) | sí |
+| `/buscar?…` | Buscador con varios filtros combinados | no |
+| `/sitemap.xml`, `/robots.txt` | Dinámicos | — |
+
+Cualquier filtro por querystring (`?dormitorios=2`, `?orden=…`) vuelve la página `noindex,follow` con
+canonical a la landing base, para no generar contenido duplicado. La paginación usa `?pagina=N`
+con `rel=prev/next`.
+
+## Panel (`/admin`)
+
+- **Avisos:** alta rápida pensada para sembrar el sitio: pegás el texto del posteo de Facebook o de
+  la web de la inmobiliaria, tocás *Autocompletar* (detecta precio, expensas, WhatsApp, dormitorios,
+  tipo, barrio…), revisás y guardás. *Guardar y cargar otro* repite tipo, barrio, contacto e
+  inmobiliaria para cargar en tanda.
+- **Moderación:** lo que llega por `/publicar`. Se aprueba (asignando barrio si escribieron "Otro")
+  o se rechaza con motivo.
+- **Verificación:** cola de frescura (ver abajo).
+- **Inmobiliarias y barrios:** ABM. Los barrios tienen intro propia para su landing.
 
 ## Despliegue
 
@@ -109,3 +138,10 @@ Los tiles salen de `MAPA_TILES_URL`. Los de `tile.openstreetmap.org` alcanzan pa
 lanzamiento, pero su [política de uso](https://operations.osmfoundation.org/policies/tiles/) no
 admite tráfico alto: si el sitio crece, cambiar a un proveedor (MapTiler, Stadia, etc.) es solo
 editar el `.env`.
+
+## Pendiente / próximos pasos
+
+- Mandar email al anunciante cuando su aviso se aprueba o se rechaza (hoy solo se ve en el panel).
+- Implementar `WhatsappNotificador` con la API de WhatsApp Business (requiere plantilla aprobada por Meta).
+- Imagen de Open Graph propia para las landings (hoy usan la genérica del sitio).
+- Monetización: el campo `destacado` ya ordena primero en todos los listados.
