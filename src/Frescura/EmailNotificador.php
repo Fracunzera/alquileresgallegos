@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Frescura;
 
-use App\Config;
+use App\Mail\Email;
+use App\Mail\Mail;
 
-/**
- * Envía el pedido por email con mail() de PHP (disponible en casi todo hosting compartido).
- * Para volumen, reemplazar por SMTP/servicio transaccional implementando la misma interfaz.
- */
+/** Envía el pedido de confirmación por email (Brevo en producción). */
 final class EmailNotificador implements Notificador
 {
     public function enviar(array $aviso, string $link, string $mensaje): bool
@@ -17,13 +15,6 @@ final class EmailNotificador implements Notificador
         if (empty($aviso['contacto_email'])) {
             return false;
         }
-        $de = (string) Config::get('APP_EMAIL_CONTACTO', 'no-responder@localhost');
-        $asunto = '=?UTF-8?B?' . base64_encode('¿Tu aviso sigue disponible? ' . $aviso['titulo']) . '?=';
-        $cabeceras = implode("\r\n", [
-            'From: ' . app_nombre() . " <{$de}>",
-            'Content-Type: text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding: 8bit',
-        ]);
-        return mail($aviso['contacto_email'], $asunto, $mensaje, $cabeceras);
+        return Mail::enviar(new Email($aviso['contacto_email'], '¿Tu aviso sigue disponible? ' . $aviso['titulo'], $mensaje));
     }
 }

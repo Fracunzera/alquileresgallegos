@@ -9,6 +9,7 @@ use App\Http;
 use App\Repositories\BarrioRepo;
 use App\Seo\Meta;
 use App\Services\AvisoService;
+use App\Services\FormToken;
 use App\Services\Fotos;
 use App\Services\RateLimiter;
 use App\View;
@@ -33,7 +34,7 @@ final class PublicarController
         if (Http::post('sitio_web') !== '' && Http::post('sitio_web') !== null) {
             Http::redirigir('/publicar/gracias', 303);
         }
-        if (!self::tokenValido((string) Http::post('_t'))) {
+        if (!FormToken::valido((string) Http::post('_t'), 'publicar', self::SEGUNDOS_MINIMOS, self::SEGUNDOS_MAXIMOS)) {
             return $this->render($_POST, ['general' => 'El formulario venció o se envió demasiado rápido. Revisá los datos y volvé a enviarlo.']);
         }
         $clave = 'publicar:' . Http::ip();
@@ -65,23 +66,6 @@ final class PublicarController
         ]);
     }
 
-    /** Token "timestamp.firma": prueba que el formulario salió de este sitio y no se llenó en un instante. */
-    public static function token(?int $momento = null): string
-    {
-        $momento ??= time();
-        return $momento . '.' . hash_hmac('sha256', 'publicar|' . $momento, Config::clave());
-    }
-
-    public static function tokenValido(string $token): bool
-    {
-        [$momento, $firma] = array_pad(explode('.', $token, 2), 2, '');
-        if (!ctype_digit($momento) || !hash_equals(hash_hmac('sha256', 'publicar|' . $momento, Config::clave()), $firma)) {
-            return false;
-        }
-        $edad = time() - (int) $momento;
-        return $edad >= self::SEGUNDOS_MINIMOS && $edad <= self::SEGUNDOS_MAXIMOS;
-    }
-
     /** @param array<string, mixed> $valores @param array<string, string> $errores */
     private function render(array $valores, array $errores): string
     {
@@ -98,7 +82,7 @@ final class PublicarController
             'v' => $valores,
             'err' => $errores,
             'barrios' => (new BarrioRepo())->activos(),
-            'token' => self::token(),
+            'token' => FormToken::generar('publicar'),
         ]);
     }
 }
