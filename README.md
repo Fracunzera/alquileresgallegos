@@ -145,6 +145,29 @@ anunciante, en el admin y en el mensaje de "¿sigue disponible?". Son aproximada
 
   Además de la frescura, borra los avisos de `/publicar` que no confirmaron el email.
 
+## Sitio de prueba y paso al dominio final
+
+Primero el sitio corre en **alquileres.blucaro.site** (prueba) y después en
+**alquileresriogallegos.com.ar** (definitivo).
+
+En el `.env` del sitio de prueba:
+
+```
+APP_URL=https://alquileres.blucaro.site
+APP_INDEXAR=0
+```
+
+Con `APP_INDEXAR=0` todas las páginas salen con `noindex`, no hay sitemap y se ve un aviso de
+"versión de prueba", así Google no indexa el dominio de prueba (sería contenido duplicado del
+definitivo). Las vistas previas de WhatsApp siguen funcionando para probar.
+
+Para pasar al dominio final (la base no guarda URLs absolutas, así que alcanza con esto):
+
+1. Copiar la base y `public/uploads/` al servidor definitivo (o apuntar el dominio nuevo al mismo).
+2. En el `.env`: `APP_URL=https://alquileresriogallegos.com.ar` y `APP_INDEXAR=1`.
+3. Redirigir `alquileres.blucaro.site` con 301 al dominio final, conservando la ruta, o darlo de baja.
+4. Dar de alta el dominio final en Google Search Console y enviar el sitemap.
+
 ## Frescura de avisos
 
 Un aviso activo con más de `FRESCURA_DIAS_VERIFICACION` días (15 por defecto) sin verificar
