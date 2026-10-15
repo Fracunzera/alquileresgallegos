@@ -58,6 +58,10 @@ use App\Services\Csrf;
     </select>
     <button class="boton boton-chico boton-peligro" type="submit">Rechazar</button>
   </form>
+  <form method="post" action="/admin/moderacion/<?= (int) $a['id'] ?>/bloquear" onsubmit="return confirm('¿Rechazar y bloquear su WhatsApp, email e IP? No se le avisa.')">
+    <?= Csrf::campo() ?>
+    <button class="boton boton-chico boton-secundario" type="submit">Rechazar y bloquear (bromas / spam)</button>
+  </form>
 </article>
 <?php endforeach ?>
 

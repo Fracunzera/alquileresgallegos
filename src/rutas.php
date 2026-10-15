@@ -52,6 +52,10 @@ return static function (Router $r): void {
     $r->get('/admin/moderacion', [Admin\ModeracionController::class, 'index']);
     $r->post('/admin/moderacion/{id:\d+}/aprobar', [Admin\ModeracionController::class, 'aprobar']);
     $r->post('/admin/moderacion/{id:\d+}/rechazar', [Admin\ModeracionController::class, 'rechazar']);
+    $r->post('/admin/moderacion/{id:\d+}/bloquear', [Admin\ModeracionController::class, 'bloquear']);
+    $r->get('/admin/bloqueos', [Admin\BloqueosController::class, 'index']);
+    $r->post('/admin/bloqueos', [Admin\BloqueosController::class, 'crear']);
+    $r->post('/admin/bloqueos/{id:\d+}/borrar', [Admin\BloqueosController::class, 'borrar']);
     $r->post('/admin/moderacion/{id:\d+}/confirmar-email', [Admin\ModeracionController::class, 'confirmarEmail']);
     $r->get('/admin/verificacion', [Admin\VerificacionController::class, 'index']);
     $r->post('/admin/verificacion/{id:\d+}/{accion:confirmar|solicitar|alquilado|pausar}', [Admin\VerificacionController::class, 'accion']);

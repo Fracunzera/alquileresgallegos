@@ -10,6 +10,7 @@ use App\Repositories\AvisoRepo;
 use App\Repositories\BarrioRepo;
 use App\Services\AvisoService;
 use App\Services\Auth;
+use App\Services\Bloqueos;
 use App\Services\Confirmacion;
 use App\Services\Flash;
 
@@ -65,6 +66,19 @@ final class ModeracionController extends Base
             Flash::ok("Aviso n.º {$avisoId} publicado.");
         } catch (\RuntimeException $e) {
             Flash::error($e->getMessage());
+        }
+        Http::redirigir('/admin/moderacion');
+    }
+
+    /** Rechaza sin avisarle al anunciante y bloquea su WhatsApp, email e IP. */
+    public function bloquear(string $id): string
+    {
+        $aviso = Db::fila('SELECT * FROM avisos WHERE id = ?', [self::id($id)]);
+        if ($aviso !== null) {
+            $motivo = 'Spam o contenido inapropiado';
+            AvisoService::cambiarEstado((int) $aviso['id'], 'rechazado', $motivo, Auth::adminId());
+            $bloqueado = Bloqueos::bloquearAnunciante($aviso, $motivo . " (aviso n.º {$aviso['id']})", Auth::adminId());
+            Flash::ok("Aviso n.º {$aviso['id']} rechazado. Bloqueado: " . ($bloqueado ? implode(', ', $bloqueado) : 'sin datos para bloquear') . '.');
         }
         Http::redirigir('/admin/moderacion');
     }

@@ -44,6 +44,7 @@ if ($logueado) {
     <a href="/admin/verificacion">Verificación<?= $enCola ? " <span class=\"globo\">{$enCola}</span>" : '' ?></a>
     <a href="/admin/inmobiliarias">Inmobiliarias</a>
     <a href="/admin/barrios">Barrios</a>
+    <a href="/admin/bloqueos">Bloqueos</a>
     <a href="/" target="_blank">Ver sitio ↗</a>
   </nav>
   <?php endif ?>

@@ -9,6 +9,7 @@ use App\Http;
 use App\Repositories\BarrioRepo;
 use App\Seo\Meta;
 use App\Services\AvisoService;
+use App\Services\Bloqueos;
 use App\Services\Confirmacion;
 use App\Services\FormToken;
 use App\Services\Fotos;
@@ -54,6 +55,10 @@ final class PublicarController
         }
 
         RateLimiter::registrar($clave, 86400);
+        if (Bloqueos::coincide($datos['contacto_whatsapp'], $datos['contacto_email'], Http::ip())) {
+            error_log('Publicar: envío descartado por bloqueo (' . Http::ip() . ')');
+            Http::redirigir('/publicar/gracias', 303);
+        }
         $id = AvisoService::crear($datos, 'formulario', 'pendiente', Http::ip());
         Fotos::agregarSubidas($id, $_FILES['fotos'] ?? [], Config::int('FOTOS_MAX_POR_AVISO', 12));
         Confirmacion::enviar($id);
