@@ -69,12 +69,35 @@ El panel de administración está en `/admin`.
 | `/inmobiliaria/{slug}` | Página de la inmobiliaria con sus avisos | sí, si tiene avisos |
 | `/publicar` | Formulario público sin registro: confirmación por email y después moderación | sí |
 | `/aviso/{id}/denunciar` | Denuncia de un aviso (puede pausarlo solo) | no |
+| `/cuenta` | Panel del anunciante registrado (ingreso con link por email) | no |
 | `/buscar?…` | Buscador con varios filtros combinados | no |
 | `/sitemap.xml`, `/robots.txt` | Dinámicos | — |
 
 Cualquier filtro por querystring (`?dormitorios=2`, `?orden=…`) vuelve la página `noindex,follow` con
 canonical a la landing base, para no generar contenido duplicado. La paginación usa `?pagina=N`
 con `rel=prev/next`.
+
+## Cuentas de anunciantes (`/cuenta`)
+
+Para quien publica varios avisos o es inmobiliaria. Sin contraseña: se entra con un link de un solo
+uso que llega por email.
+
+- **Mi cuenta:** lista de avisos con estado, visitas y consultas de los últimos 30 días; acciones
+  "sigue disponible", "ya se alquiló", pausar, volver a publicar, editar y fotos.
+- **Particulares:** hasta 3 avisos vigentes (`CUENTA_MAX_AVISOS_PARTICULAR`).
+- **Inmobiliarias:** sin límite, pero recién publican cuando las vinculás a su ficha desde
+  `/admin/cuentas` (así nadie se hace pasar por una inmobiliaria).
+- **Moderación:** los avisos nuevos de una cuenta pasan por moderación hasta que la marques como
+  confiable. Si una cuenta no confiable edita un aviso publicado, el cambio sale al instante pero
+  te queda en "Cambios para revisar".
+- En el primer ingreso, la cuenta adopta los avisos que esa persona había publicado antes sin
+  cuenta (mismo email).
+
+## Estadísticas
+
+Cada ficha cuenta visitas (una por aviso y sesión del navegador) y clics en WhatsApp, teléfono y
+email con `navigator.sendBeacon`, descartando bots y vistas previas. Se ven en el panel del
+anunciante, en el admin y en el mensaje de "¿sigue disponible?". Son aproximadas.
 
 ## Panel (`/admin`)
 
@@ -90,6 +113,7 @@ con `rel=prev/next`.
 - **Bloqueos:** WhatsApp y email bloqueados para siempre; IP por 7 días (en los celulares muchas
   personas comparten IP). Lo que llega de un bloqueado se descarta en silencio.
 - **Verificación:** cola de frescura (ver abajo).
+- **Cuentas:** vincular inmobiliarias, marcar confiables, suspender (pausa sus avisos).
 - **Inmobiliarias y barrios:** ABM. Los barrios tienen intro propia para su landing.
 
 ## Despliegue
@@ -162,7 +186,7 @@ editar el `.env`.
 
 ## Pendiente / próximos pasos
 
-- Estadísticas por aviso (visitas y clics en WhatsApp) y link privado de gestión para el anunciante.
+- Abono para inmobiliarias y avisos destacados pagos (la estructura ya está: cuentas vinculadas y `destacado`).
 - Implementar `WhatsappNotificador` con la API de WhatsApp Business (requiere plantilla aprobada por Meta).
 - Imagen de Open Graph propia para las landings (hoy usan la genérica del sitio).
 - Monetización: el campo `destacado` ya ordena primero en todos los listados.
