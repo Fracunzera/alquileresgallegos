@@ -84,6 +84,7 @@ final class SeoController
             'Disallow: /aviso/*/denunciar',
             'Disallow: /publicar/gracias',
             'Disallow: /buscar',
+            'Disallow: /estadisticas',
             '',
             'Sitemap: ' . url_abs('/sitemap.xml'),
             '',

@@ -6,6 +6,7 @@ use App\Controllers\Admin;
 use App\Controllers\AvisoController;
 use App\Controllers\ConfirmarController;
 use App\Controllers\DenunciarController;
+use App\Controllers\EstadisticasController;
 use App\Controllers\HomeController;
 use App\Controllers\InmobiliariaController;
 use App\Controllers\LandingController;
@@ -28,6 +29,7 @@ return static function (Router $r): void {
     $r->post('/aviso/{id:\d+}/denunciar', [DenunciarController::class, 'enviar']);
     $r->get('/aviso/{id:\d+}', fn (string $id) => (new AvisoController())->ver($id, ''));
     $r->get('/inmobiliaria/{slug:[a-z0-9-]+}', [InmobiliariaController::class, 'ver']);
+    $r->post('/estadisticas', [EstadisticasController::class, 'registrar']);
     $r->get('/sitemap.xml', [SeoController::class, 'sitemap']);
     $r->get('/robots.txt', [SeoController::class, 'robots']);
     $r->get('/publicar', [PublicarController::class, 'form']);

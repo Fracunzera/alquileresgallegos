@@ -219,6 +219,7 @@ final class AvisosController extends Base
             'fotos' => $fotos,
             'barrios' => (new BarrioRepo())->todos(),
             'inmobiliarias' => (new InmobiliariaRepo())->todas(),
+            'estadisticas' => $aviso ? \App\Services\Estadisticas::resumen([(int) $aviso['id']])[(int) $aviso['id']] : null,
             'historial' => $aviso ? Db::filas('SELECT v.*, ad.nombre AS admin_nombre FROM verificaciones v LEFT JOIN admins ad ON ad.id = v.admin_id WHERE aviso_id = ? ORDER BY v.creado_en DESC LIMIT 20', [$aviso['id']]) : [],
         ]);
     }

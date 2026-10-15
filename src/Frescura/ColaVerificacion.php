@@ -112,8 +112,12 @@ final class ColaVerificacion
     /** @param array<string, mixed> $aviso */
     public static function mensaje(array $aviso, string $link): string
     {
+        $stats = \App\Services\Estadisticas::resumen([(int) $aviso['id']])[(int) $aviso['id']];
+        $actividad = $stats['vistas'] > 0
+            ? "En los últimos 30 días lo vieron {$stats['vistas']} personas y te consultaron {$stats['consultas']} veces desde el sitio.\n\n"
+            : '';
         return "Hola! Te escribimos de " . app_nombre() . " por tu aviso \"{$aviso['titulo']}\" ("
-            . Catalogo::precio($aviso) . ").\n\n¿Sigue disponible? Confirmalo con un clic acá: {$link}\n\n"
+            . Catalogo::precio($aviso) . ").\n\n{$actividad}¿Sigue disponible? Confirmalo con un clic acá: {$link}\n\n"
             . 'Si no recibimos respuesta en ' . self::diasGracia() . ' días lo vamos a pausar para que nadie consulte por algo que ya no está. ¡Gracias!';
     }
 

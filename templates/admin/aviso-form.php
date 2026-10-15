@@ -20,6 +20,10 @@ $accion = $aviso ? '/admin/avisos/' . (int) $aviso['id'] : '/admin/avisos/nuevo'
 </div>
 <?php if ($mensaje): ?><p class="alerta alerta-ok"><?= e($mensaje) ?></p><?php endif ?>
 <?php if ($err): ?><p class="alerta alerta-error">Revisá los campos marcados.</p><?php endif ?>
+<?php if (!empty($estadisticas)): ?>
+<p class="nota">Últimos 30 días: <strong><?= $estadisticas['vistas'] ?></strong> visitas · <strong><?= $estadisticas['consultas'] ?></strong> consultas
+  (<?= $estadisticas['whatsapp'] ?> WhatsApp, <?= $estadisticas['telefono'] ?> teléfono, <?= $estadisticas['email'] ?> email)</p>
+<?php endif ?>
 <?php if ($aviso && $aviso['motivo_estado']): ?><p class="nota">Motivo del estado: <?= e($aviso['motivo_estado']) ?></p><?php endif ?>
 
 <?php if ($aviso): ?>

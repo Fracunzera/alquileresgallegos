@@ -45,6 +45,25 @@
     select.addEventListener('change', function () { select.form.submit(); });
   });
 
+  // Estadísticas de la ficha: una visita por aviso y sesión del navegador, y clics en los botones de contacto.
+  var ficha = document.querySelector('[data-aviso-id]');
+  if (ficha && navigator.sendBeacon) {
+    var avisoId = ficha.getAttribute('data-aviso-id');
+    var enviar = function (evento) {
+      navigator.sendBeacon('/estadisticas', new URLSearchParams({ aviso: avisoId, evento: evento }));
+    };
+    try {
+      if (!sessionStorage.getItem('visto-' + avisoId)) {
+        sessionStorage.setItem('visto-' + avisoId, '1');
+        enviar('vista');
+      }
+    } catch (e) { enviar('vista'); }
+    document.addEventListener('click', function (ev) {
+      var enlace = ev.target.closest('[data-contacto]');
+      if (enlace) enviar(enlace.getAttribute('data-contacto'));
+    });
+  }
+
   // Formulario de aviso: el campo "¿Qué barrio?" solo cuando eligen "Otro".
   document.querySelectorAll('[data-barrio]').forEach(function (select) {
     var otro = select.form.querySelector('[data-barrio-otro]');

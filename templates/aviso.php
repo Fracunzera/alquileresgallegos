@@ -12,7 +12,7 @@ $descripcionCorta = Catalogo::descripcionCorta($aviso);
 $verificado = Catalogo::haceCuanto($aviso['ultima_verificacion']);
 $publicado = Catalogo::haceCuanto($aviso['publicado_en'] ?? $aviso['creado_en']);
 ?>
-<div class="contenedor ficha">
+<div class="contenedor ficha"<?= $activo ? ' data-aviso-id="' . (int) $aviso['id'] . '"' : '' ?>>
   <?php if (!in_array($aviso['estado'], ['activo', 'pausado', 'alquilado'], true)): ?>
   <p class="aviso-estado aviso-estado-admin">Vista previa de administrador · estado: <strong><?= e(Catalogo::ESTADOS[$aviso['estado']]) ?></strong>. El público no ve esta página.</p>
   <?php elseif (!$activo): ?>
