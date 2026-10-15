@@ -67,7 +67,8 @@ El panel de administración está en `/admin`.
 | `/alquileres-{barrio}-rio-gallegos` | Landing por barrio (intro editable en el panel) | sí, si tiene avisos |
 | `/aviso/{id}-{slug}` | Ficha. Si cambia el título, la URL vieja hace 301 | si está activo |
 | `/inmobiliaria/{slug}` | Página de la inmobiliaria con sus avisos | sí, si tiene avisos |
-| `/publicar` | Formulario público sin registro (queda pendiente de moderación) | sí |
+| `/publicar` | Formulario público sin registro: confirmación por email y después moderación | sí |
+| `/aviso/{id}/denunciar` | Denuncia de un aviso (puede pausarlo solo) | no |
 | `/buscar?…` | Buscador con varios filtros combinados | no |
 | `/sitemap.xml`, `/robots.txt` | Dinámicos | — |
 
@@ -81,8 +82,13 @@ con `rel=prev/next`.
   la web de la inmobiliaria, tocás *Autocompletar* (detecta precio, expensas, WhatsApp, dormitorios,
   tipo, barrio…), revisás y guardás. *Guardar y cargar otro* repite tipo, barrio, contacto e
   inmobiliaria para cargar en tanda.
-- **Moderación:** lo que llega por `/publicar`. Se aprueba (asignando barrio si escribieron "Otro")
-  o se rechaza con motivo.
+- **Moderación:** lo que llega por `/publicar`, recién cuando la persona confirmó su email (los que
+  no confirman en 72 h se borran solos). Se aprueba asignando barrio si escribieron "Otro", se
+  rechaza con motivo (en los dos casos se le avisa por email) o se rechaza y se bloquea.
+- **Denuncias:** cada ficha tiene "Denunciar este aviso". Con una denuncia de "usan mi número", o
+  con 3 desde conexiones distintas, el aviso se pausa solo hasta que lo revises.
+- **Bloqueos:** WhatsApp y email bloqueados para siempre; IP por 7 días (en los celulares muchas
+  personas comparten IP). Lo que llega de un bloqueado se descarta en silencio.
 - **Verificación:** cola de frescura (ver abajo).
 - **Inmobiliarias y barrios:** ABM. Los barrios tienen intro propia para su landing.
 
@@ -104,6 +110,8 @@ con `rel=prev/next`.
   15 6 * * * php /ruta/al/proyecto/bin/frescura.php >> /ruta/al/proyecto/storage/logs/frescura.log 2>&1
   ```
 
+  Además de la frescura, borra los avisos de `/publicar` que no confirmaron el email.
+
 ## Frescura de avisos
 
 Un aviso activo con más de `FRESCURA_DIAS_VERIFICACION` días (15 por defecto) sin verificar
@@ -124,6 +132,19 @@ que no respondieron en `FRESCURA_DIAS_GRACIA` días.
 composer test
 ```
 
+## Email (Brevo)
+
+Los emails (confirmación, aviso aprobado/rechazado, verificación con `NOTIFICADOR=email` y avisos
+internos a `MODERACION_EMAIL`) salen por la API de [Brevo](https://www.brevo.com):
+
+1. Crear la cuenta y una API key (*SMTP & API → API keys*).
+2. Autenticar el dominio del sitio (*Senders, domains → Domains*): agregar los registros SPF, DKIM y
+   DMARC que indica Brevo en el DNS. Sin esto los emails van a spam.
+3. En `.env`: `MAIL_DRIVER=brevo`, `BREVO_API_KEY=…`, `MAIL_FROM=avisos@tudominio` y
+   `MODERACION_EMAIL=` con tu correo.
+
+En desarrollo, `MAIL_DRIVER=log` escribe los emails en `storage/logs/mail.log` en vez de mandarlos.
+
 ## Mapa
 
 Quien publica marca la ubicación tocando un mapa (opcional) y elige el barrio de la lista.
@@ -141,7 +162,7 @@ editar el `.env`.
 
 ## Pendiente / próximos pasos
 
-- Mandar email al anunciante cuando su aviso se aprueba o se rechaza (hoy solo se ve en el panel).
+- Estadísticas por aviso (visitas y clics en WhatsApp) y link privado de gestión para el anunciante.
 - Implementar `WhatsappNotificador` con la API de WhatsApp Business (requiere plantilla aprobada por Meta).
 - Imagen de Open Graph propia para las landings (hoy usan la genérica del sitio).
 - Monetización: el campo `destacado` ya ordena primero en todos los listados.
