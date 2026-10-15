@@ -63,7 +63,7 @@ $sel = fn (string $campo, string $valor) => ($query[$campo] ?? '') === $valor ? 
     <?php if (!isset($fijos['acepta_mascotas'])): ?>
     <label class="campo-check"><input type="checkbox" name="mascotas" value="1"<?= ($query['mascotas'] ?? '') === '1' ? ' checked' : '' ?>> Acepta mascotas</label>
     <?php endif ?>
-    <label class="campo-check"><input type="checkbox" name="chicos" value="1"<?= ($query['chicos'] ?? '') === '1' ? ' checked' : '' ?>> Acepta chicos</label>
+    <label class="campo-check"><input type="checkbox" name="ninos" value="1"<?= ($query['ninos'] ?? '') === '1' ? ' checked' : '' ?>> Acepta niños</label>
   </div>
   <div class="filtros-acciones">
     <button class="boton" type="submit">Filtrar</button>

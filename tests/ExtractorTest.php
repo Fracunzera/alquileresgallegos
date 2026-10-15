@@ -65,7 +65,7 @@ final class ExtractorTest extends TestCase
     }
 
     /** @return array<string, array{string, ?string, ?string}> */
-    public static function casosMascotasYChicos(): array
+    public static function casosMascotasYNinos(): array
     {
         return [
             'acepta ambos' => ['Depto amplio, se aceptan mascotas y se aceptan niños', 'si', 'si'],
@@ -74,15 +74,16 @@ final class ExtractorTest extends TestCase
             'a consultar' => ['Mascotas a consultar. Chicos: sí', 'consultar', 'si'],
             'pet friendly y solo adultos' => ['Pet friendly! Solo adultos', 'si', 'no'],
             'no acepta perros' => ['No acepta perros. Ideal pareja', 'no', null],
+            'se aceptan hijos' => ['Casa amplia, se aceptan hijos y mascotas: no', 'no', 'si'],
             'no dice nada' => ['Departamento 2 dormitorios con cochera', null, null],
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('casosMascotasYChicos')]
-    public function testMascotasYChicos(string $texto, ?string $mascotas, ?string $chicos): void
+    #[\PHPUnit\Framework\Attributes\DataProvider('casosMascotasYNinos')]
+    public function testMascotasYNinos(string $texto, ?string $mascotas, ?string $ninos): void
     {
         $d = Extractor::extraer($texto);
         $this->assertSame($mascotas, $d['acepta_mascotas'] ?? null, 'mascotas');
-        $this->assertSame($chicos, $d['acepta_chicos'] ?? null, 'chicos');
+        $this->assertSame($ninos, $d['acepta_ninos'] ?? null, 'niños');
     }
 }

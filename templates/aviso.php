@@ -59,7 +59,7 @@ $publicado = Catalogo::haceCuanto($aviso['publicado_en'] ?? $aviso['creado_en'])
         <?php if (!empty($aviso['banos'])): ?><div><dt>Baños</dt><dd><?= (int) $aviso['banos'] ?></dd></div><?php endif ?>
         <div><dt>Expensas</dt><dd><?= e($expensas ?? 'No informa') ?></dd></div>
         <?php if ($aviso['acepta_mascotas'] !== null): ?><div><dt>Mascotas</dt><dd><?= e(Catalogo::ACEPTA[$aviso['acepta_mascotas']]) ?></dd></div><?php endif ?>
-        <?php if ($aviso['acepta_chicos'] !== null): ?><div><dt>Chicos</dt><dd><?= e(Catalogo::ACEPTA[$aviso['acepta_chicos']]) ?></dd></div><?php endif ?>
+        <?php if ($aviso['acepta_ninos'] !== null): ?><div><dt>Niños</dt><dd><?= e(Catalogo::ACEPTA[$aviso['acepta_ninos']]) ?></dd></div><?php endif ?>
         <?php if ($aviso['barrio_slug']): ?>
         <div><dt>Barrio</dt><dd><a href="<?= e(Catalogo::urlBarrio($aviso['barrio_slug'])) ?>"><?= e($aviso['barrio_nombre']) ?></a></dd></div>
         <?php endif ?>

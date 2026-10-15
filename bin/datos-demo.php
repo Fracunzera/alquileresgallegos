@@ -100,7 +100,7 @@ for ($n = 0; $n < $cantidad; $n++) {
     );
     $id = (int) Db::pdo()->lastInsertId();
     $opciones = [null, 'si', 'no', 'consultar'];
-    Db::run('UPDATE avisos SET acepta_mascotas = ?, acepta_chicos = ? WHERE id = ?', [$opciones[mt_rand(0, 3)], $opciones[mt_rand(0, 3)], $id]);
+    Db::run('UPDATE avisos SET acepta_mascotas = ?, acepta_ninos = ? WHERE id = ?', [$opciones[mt_rand(0, 3)], $opciones[mt_rand(0, 3)], $id]);
 
     for ($f = 0, $total = mt_rand(0, 5); $f < $total; $f++) {
         $tmp = tempnam(sys_get_temp_dir(), 'demo');

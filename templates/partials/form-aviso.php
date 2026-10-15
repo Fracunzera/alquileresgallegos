@@ -67,7 +67,7 @@ $descripcion = '
     <label class="campo"><span>Baños</span><input type="number" name="banos" min="0" max="30" inputmode="numeric" value="<?= e($val('banos')) ?>"></label>
   </div>
   <div class="fila">
-    <?php foreach (['acepta_mascotas' => '¿Acepta mascotas?', 'acepta_chicos' => '¿Acepta chicos?'] as $campo => $etiqueta): ?>
+    <?php foreach (['acepta_mascotas' => '¿Acepta mascotas?', 'acepta_ninos' => '¿Acepta niños?'] as $campo => $etiqueta): ?>
     <label class="campo"><span><?= e($etiqueta) ?></span>
       <select name="<?= $campo ?>">
         <option value="">No informa</option>
