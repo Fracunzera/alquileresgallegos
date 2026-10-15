@@ -148,8 +148,8 @@ final class AvisoRepo
                 $condiciones[] = 'a.id = :id';
                 $params['id'] = (int) $q;
             } else {
-                $condiciones[] = '(a.titulo LIKE :q1 OR a.descripcion LIKE :q2 OR a.contacto_whatsapp LIKE :q3)';
-                $params['q1'] = $params['q2'] = $params['q3'] = '%' . $q . '%';
+                $condiciones[] = '(a.titulo LIKE :q1 OR a.descripcion LIKE :q2 OR a.contacto_whatsapp LIKE :q3 OR a.contacto_email LIKE :q4)';
+                $params['q1'] = $params['q2'] = $params['q3'] = $params['q4'] = '%' . $q . '%';
             }
         }
         $where = implode(' AND ', $condiciones);

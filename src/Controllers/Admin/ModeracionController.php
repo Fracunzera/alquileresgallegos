@@ -40,6 +40,14 @@ final class ModeracionController extends Base
             ) : 0;
         }
         unset($item);
+        $cuentas = [];
+        foreach (Db::filas(
+            "SELECT c.*, (SELECT COUNT(*) FROM avisos a WHERE a.cuenta_id = c.id AND a.estado IN ('activo','pausado','alquilado')) AS aprobados
+             FROM cuentas c WHERE c.id IN (SELECT cuenta_id FROM avisos WHERE cuenta_id IS NOT NULL
+               AND (estado = 'pendiente' OR cambios_sin_revisar_en IS NOT NULL))"
+        ) as $cuenta) {
+            $cuentas[(int) $cuenta['id']] = $cuenta;
+        }
 
         return $this->render('moderacion', 'Moderación', [
             'items' => $items,
@@ -50,6 +58,11 @@ final class ModeracionController extends Base
                  WHERE estado = 'pendiente' AND email_confirmado_en IS NULL ORDER BY creado_en DESC"
             ),
             'horas' => Confirmacion::horas(),
+            'cuentas' => $cuentas,
+            'editados' => Db::filas(
+                "SELECT a.id, a.titulo, a.slug, a.estado, a.cuenta_id, a.cambios_sin_revisar_en FROM avisos a
+                 WHERE a.cambios_sin_revisar_en IS NOT NULL AND a.estado = 'activo' ORDER BY a.cambios_sin_revisar_en"
+            ),
         ]);
     }
 
@@ -78,8 +91,20 @@ final class ModeracionController extends Base
             $motivo = 'Spam o contenido inapropiado';
             AvisoService::cambiarEstado((int) $aviso['id'], 'rechazado', $motivo, Auth::adminId());
             $bloqueado = Bloqueos::bloquearAnunciante($aviso, $motivo . " (aviso n.º {$aviso['id']})", Auth::adminId());
+            if ($aviso['cuenta_id'] !== null) {
+                \App\Services\Cuentas::suspender((int) $aviso['cuenta_id'], Auth::adminId());
+                $bloqueado[] = 'cuenta suspendida';
+            }
             Flash::ok("Aviso n.º {$aviso['id']} rechazado. Bloqueado: " . ($bloqueado ? implode(', ', $bloqueado) : 'sin datos para bloquear') . '.');
         }
+        Http::redirigir('/admin/moderacion');
+    }
+
+    /** Los cambios de un aviso ya publicado se revisaron y están bien. */
+    public function revisado(string $id): string
+    {
+        Db::run('UPDATE avisos SET cambios_sin_revisar_en = NULL WHERE id = ?', [self::id($id)]);
+        Flash::ok("Cambios del aviso n.º {$id} revisados.");
         Http::redirigir('/admin/moderacion');
     }
 

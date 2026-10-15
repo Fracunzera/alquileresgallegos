@@ -2,14 +2,15 @@
 /**
  * @var list<array<string, mixed>> $items @var list<array<string, mixed>> $barrios @var list<string> $motivos
  * @var list<array<string, mixed>> $sinConfirmar @var int $horas
+ * @var array<int, array<string, mixed>> $cuentas @var list<array<string, mixed>> $editados
  */
 use App\Catalogo;
 use App\Services\Csrf;
 ?>
 <h1>Moderación</h1>
-<p class="nota">Avisos enviados desde /publicar con el email confirmado, los más viejos primero. Al aprobar se publican, cuentan como verificados hoy y se le avisa por email a quien publicó.</p>
+<p class="nota">Avisos nuevos de /publicar (con el email confirmado) y de cuentas no confiables, los más viejos primero. Al aprobar se publican, cuentan como verificados hoy y se le avisa por email a quien publicó.</p>
 <?php if (!$items): ?>
-<p class="vacio">No hay avisos para moderar.</p>
+<p class="vacio">No hay avisos nuevos para moderar.</p>
 <?php endif ?>
 <?php foreach ($items as $a): ?>
 <article class="tarjeta-admin">
@@ -24,6 +25,11 @@ use App\Services\Csrf;
     <?= $a['direccion'] ? ' · ' . e($a['direccion']) . ($a['mostrar_direccion'] ? ' (pública)' : ' (oculta)') : '' ?>
     <?= $a['lat'] ? ' · con ubicación en el mapa' : '' ?>
     <br>Contacto: <?= e(implode(' · ', array_filter([$a['contacto_whatsapp'] ? 'WA ' . $a['contacto_whatsapp'] : null, $a['contacto_telefono'], $a['contacto_email'] . ($a['mostrar_email'] ? '' : ' (oculto)')]))) ?>
+    <?php if ($a['cuenta_id'] && isset($cuentas[(int) $a['cuenta_id']])): $c = $cuentas[(int) $a['cuenta_id']]; ?>
+    <br>Cuenta: <strong><?= e($c['nombre']) ?></strong> (<?= e($c['email']) ?>) · <?= (int) $c['aprobados'] ?> aviso(s) aprobados antes
+    <form method="post" action="/admin/cuentas/<?= (int) $c['id'] ?>/confiable" class="en-linea"><?= Csrf::campo() ?><input type="hidden" name="volver" value="/admin/moderacion">
+      <button class="boton boton-chico boton-secundario" type="submit">Marcar confiable</button></form>
+    <?php endif ?>
     <?php if ($a['otros_mismo_contacto']): ?><br><span class="estado estado-pendiente"><?= (int) $a['otros_mismo_contacto'] ?> aviso(s) más con este WhatsApp</span> <a href="/admin/avisos?q=<?= e($a['contacto_whatsapp']) ?>">ver</a><?php endif ?>
   </div>
   <div class="cita"><?= e($a['descripcion']) ?></div>
@@ -64,6 +70,27 @@ use App\Services\Csrf;
   </form>
 </article>
 <?php endforeach ?>
+
+<?php if ($editados): ?>
+<section class="seccion">
+  <h2>Cambios para revisar (<?= count($editados) ?>)</h2>
+  <p class="nota">Avisos ya publicados que su cuenta editó. Los cambios ya están online.</p>
+  <?php foreach ($editados as $ed): ?>
+  <div class="tarjeta-admin">
+    <div class="titulo-con-accion">
+      <a href="/admin/avisos/<?= (int) $ed['id'] ?>"><strong>n.º <?= (int) $ed['id'] ?> · <?= e($ed['titulo']) ?></strong></a>
+      <small>editado <?= e($ed['cambios_sin_revisar_en']) ?><?= isset($cuentas[(int) $ed['cuenta_id']]) ? ' por ' . e($cuentas[(int) $ed['cuenta_id']]['email']) : '' ?></small>
+    </div>
+    <div class="acciones-estado">
+      <a class="boton boton-chico boton-secundario" href="<?= e(Catalogo::urlAviso((int) $ed['id'], $ed['slug'])) ?>" target="_blank">Ver aviso</a>
+      <form method="post" action="/admin/moderacion/<?= (int) $ed['id'] ?>/revisado"><?= Csrf::campo() ?><button class="boton boton-chico" type="submit">Está bien</button></form>
+      <form method="post" action="/admin/avisos/<?= (int) $ed['id'] ?>/estado"><?= Csrf::campo() ?><input type="hidden" name="estado" value="pausado"><input type="hidden" name="motivo" value="Pausado por el equipo: revisar los cambios"><input type="hidden" name="volver" value="/admin/moderacion">
+        <button class="boton boton-chico boton-peligro" type="submit">Pausar</button></form>
+    </div>
+  </div>
+  <?php endforeach ?>
+</section>
+<?php endif ?>
 
 <?php if ($sinConfirmar): ?>
 <details class="seccion">

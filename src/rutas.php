@@ -78,6 +78,11 @@ return static function (Router $r): void {
     $r->post('/admin/moderacion/{id:\d+}/bloquear', [Admin\ModeracionController::class, 'bloquear']);
     $r->get('/admin/denuncias', [Admin\DenunciasController::class, 'index']);
     $r->post('/admin/denuncias/{id:\d+}/{accion:descartar|alquilado|baja|bloquear}', [Admin\DenunciasController::class, 'resolver']);
+    $r->get('/admin/cuentas', [Admin\CuentasController::class, 'index']);
+    $r->post('/admin/cuentas/{id:\d+}/confiable', [Admin\CuentasController::class, 'confiable']);
+    $r->post('/admin/cuentas/{id:\d+}/suspender', [Admin\CuentasController::class, 'suspender']);
+    $r->post('/admin/cuentas/{id:\d+}/vincular', [Admin\CuentasController::class, 'vincular']);
+    $r->post('/admin/moderacion/{id:\d+}/revisado', [Admin\ModeracionController::class, 'revisado']);
     $r->get('/admin/bloqueos', [Admin\BloqueosController::class, 'index']);
     $r->post('/admin/bloqueos', [Admin\BloqueosController::class, 'crear']);
     $r->post('/admin/bloqueos/{id:\d+}/borrar', [Admin\BloqueosController::class, 'borrar']);

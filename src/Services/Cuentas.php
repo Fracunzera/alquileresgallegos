@@ -112,6 +112,34 @@ final class Cuentas
     }
 
     /**
+     * Vincula una cuenta de inmobiliaria a su ficha: desde ahí publica sin límite y sus avisos
+     * salen con el nombre de la inmobiliaria.
+     */
+    public static function vincularInmobiliaria(int $cuentaId, int $inmobiliariaId): void
+    {
+        Db::run("UPDATE cuentas SET tipo = 'inmobiliaria', inmobiliaria_id = ? WHERE id = ?", [$inmobiliariaId, $cuentaId]);
+        Db::run("UPDATE avisos SET publicador = 'inmobiliaria', inmobiliaria_id = ? WHERE cuenta_id = ?", [$inmobiliariaId, $cuentaId]);
+        $cuenta = Db::fila('SELECT c.email, c.nombre, i.nombre AS inmobiliaria FROM cuentas c JOIN inmobiliarias i ON i.id = c.inmobiliaria_id WHERE c.id = ?', [$cuentaId]);
+        Mail::enviar(new \App\Mail\Email(
+            $cuenta['email'],
+            '¡Tu cuenta de inmobiliaria está lista!',
+            "¡Hola {$cuenta['nombre']}!\n\nVerificamos tu cuenta de {$cuenta['inmobiliaria']}. Ya podés publicar todos tus avisos desde tu panel:\n"
+            . url_abs('/cuenta') . "\n\n— " . app_nombre()
+        ));
+    }
+
+    /** Suspende la cuenta (no puede entrar) y pausa sus avisos publicados. */
+    public static function suspender(int $cuentaId, ?int $adminId): int
+    {
+        Db::run("UPDATE cuentas SET estado = 'suspendida' WHERE id = ?", [$cuentaId]);
+        $ids = array_column(Db::filas("SELECT id FROM avisos WHERE cuenta_id = ? AND estado IN ('activo','pendiente')", [$cuentaId]), 'id');
+        foreach ($ids as $id) {
+            AvisoService::cambiarEstado((int) $id, 'pausado', 'Cuenta suspendida', $adminId);
+        }
+        return count($ids);
+    }
+
+    /**
      * Completa los datos de un aviso con los de la cuenta (quién publica).
      *
      * @param array<string, mixed> $datos salida de AvisoService::validar()
