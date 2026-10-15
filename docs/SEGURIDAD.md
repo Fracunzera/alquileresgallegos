@@ -30,7 +30,7 @@ varias barreras:
 
 | Formulario | Protecciones |
 |---|---|
-| `/publicar` | Campo trampa, token con tiempo mínimo (5 s) y vencimiento, 5 envíos por IP por día, lista de bloqueo, **confirmación por email** y **moderación** antes de publicar. |
+| `/publicar` | **Ya no recibe avisos anónimos:** para publicar hace falta una cuenta con email confirmado. Los avisos de cuentas nuevas pasan por **moderación** hasta que las marques como confiables; una cuenta problemática se suspende entera. |
 | `/cuenta/registro` | Campo trampa, token con tiempo mínimo, 5 cuentas por IP por día, lista de bloqueo, confirmación por email (primer ingreso) y moderación hasta marcar la cuenta confiable. |
 | `/cuenta/ingresar` | Token, 10 pedidos por IP por hora, 5 links por hora por casilla. Solo manda emails a cuentas existentes. |
 | `/aviso/{id}/denunciar` | Campo trampa, token, 10 denuncias por IP por día, una denuncia abierta por IP y aviso, lista de bloqueo. |
@@ -38,7 +38,7 @@ varias barreras:
 
 **Captcha listo para prender:** si aparece spam que pase esas barreras (avisos basura en la cola
 de moderación todos los días, cuentas falsas en serie), se activa **Cloudflare Turnstile** en
-`/publicar`, `/cuenta/registro` y `/denunciar` cargando dos claves en el `.env`:
+`/cuenta/registro` y `/denunciar` cargando dos claves en el `.env`:
 
 ```
 TURNSTILE_SITE_KEY=...

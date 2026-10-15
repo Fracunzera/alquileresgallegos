@@ -1,29 +1,25 @@
-<?php /** @var array<string, mixed> $v @var array<string, string> $err @var list<array<string, mixed>> $barrios @var string $token */ ?>
+<?php /** @var int $maxParticular */ ?>
 <div class="contenedor pagina-angosta">
   <h1>Publicá tu alquiler gratis</h1>
-  <p class="intro">Sin registrarte. Te llega un email para confirmar el aviso; después lo revisamos y lo publicamos, normalmente en menos de 24 horas. Te contactan directo por WhatsApp.</p>
+  <p class="intro">Publicar en <?= e(app_nombre()) ?> es gratis. Para cuidar que los avisos sean reales, cada aviso se publica desde una cuenta con email confirmado: la creás en un minuto y no necesitás contraseña.</p>
 
-  <p class="alerta alerta-ok">¿Vas a publicar varios avisos o sos inmobiliaria? <a href="/cuenta/registro">Creá una cuenta gratis</a> y administrálos desde un panel, con estadísticas de visitas y consultas.</p>
-
-  <?php if ($err): ?>
-  <div class="alerta alerta-error" role="alert">
-    <?php if (isset($err['general'])): ?><p><?= e($err['general']) ?></p><?php endif ?>
-    <?php if (array_diff_key($err, ['general' => 1])): ?><p>Revisá los campos marcados en rojo.</p><?php endif ?>
-    <p>Por seguridad, volvé a elegir las fotos antes de enviar.</p>
+  <div class="tarjeta-admin">
+    <p><a class="boton boton-whatsapp" href="/cuenta/registro">Crear mi cuenta gratis</a></p>
+    <p>¿Ya tenés cuenta? <a href="/cuenta/ingresar">Entrá con tu email</a> y publicá.</p>
   </div>
-  <?php endif ?>
 
-  <form method="post" action="/publicar" enctype="multipart/form-data" class="formulario">
-    <input type="hidden" name="_t" value="<?= e($token) ?>">
-    <div class="trampa" aria-hidden="true">
-      <label>No completar este campo <input type="text" name="sitio_web" tabindex="-1" autocomplete="off"></label>
-    </div>
-    <?= App\View::parcial('partials/form-aviso', ['v' => $v, 'err' => $err, 'barrios' => $barrios, 'publico' => true]) ?>
-    <label class="campo-check"><input type="checkbox" name="acepto" value="1"<?= !empty($v['acepto']) ? ' checked' : '' ?> required>
-      Confirmo que la propiedad está en Río Gallegos, que los datos son reales y que puedo alquilarla.</label>
-    <?php if (isset($err['acepto'])): ?><p class="error-campo"><?= e($err['acepto']) ?></p><?php endif ?>
-    <?= App\Services\Captcha::widget() ?>
-    <button class="boton boton-whatsapp" type="submit">Enviar aviso para revisión</button>
-    <p class="nota">Cuando lo aprobemos te avisamos por email. Los avisos se revisan periódicamente: cada tanto te vamos a preguntar si sigue disponible para que el sitio no tenga avisos viejos.</p>
-  </form>
+  <section class="seccion">
+    <h2>Cómo funciona</h2>
+    <ol class="pasos">
+      <li><strong>Creá tu cuenta</strong> con tu nombre y tu email. Te llega un link para entrar: no hay contraseñas que recordar.</li>
+      <li><strong>Cargá el aviso</strong>: tipo de propiedad, barrio, precio, expensas, fotos y una buena descripción.</li>
+      <li><strong>Lo revisamos y lo publicamos</strong>, normalmente en menos de 24 horas. Te avisamos por email.</li>
+      <li><strong>Te consultan directo por WhatsApp.</strong> Desde tu cuenta ves cuántas visitas y consultas tiene, y lo pausás o lo marcás alquilado cuando quieras.</li>
+    </ol>
+  </section>
+
+  <section class="seccion">
+    <h2>Dueños e inmobiliarias</h2>
+    <p>Si sos dueño o dueña, podés tener hasta <?= $maxParticular ?> avisos publicados a la vez. Si sos una inmobiliaria, <a href="/cuenta/registro?tipo=inmobiliaria">creá una cuenta de inmobiliaria</a>: la verificamos y después publicás sin límite, con tu nombre y tu logo.</p>
+  </section>
 </div>

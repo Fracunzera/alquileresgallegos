@@ -79,7 +79,7 @@ use App\Catalogo;
 
   <section class="seccion llamado">
     <h2>¿Tenés una propiedad para alquilar?</h2>
-    <p>Publicar es gratis y no hace falta registrarse. Tu aviso aparece en Google y te contactan directo por WhatsApp.</p>
+    <p>Publicar es gratis: creás tu cuenta en un minuto, tu aviso aparece en Google y te contactan directo por WhatsApp.</p>
     <p><a class="boton" href="/publicar">Publicar gratis</a></p>
   </section>
 </div>

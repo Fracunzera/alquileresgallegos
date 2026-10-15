@@ -8,7 +8,7 @@ use App\Catalogo;
 use App\Services\Csrf;
 ?>
 <h1>Moderación</h1>
-<p class="nota">Avisos nuevos de /publicar (con el email confirmado) y de cuentas no confiables, los más viejos primero. Al aprobar se publican, cuentan como verificados hoy y se le avisa por email a quien publicó.</p>
+<p class="nota">Avisos nuevos de cuentas no confiables, los más viejos primero. Al aprobar se publican, cuentan como verificados hoy y se le avisa por email a quien publicó.</p>
 <?php if (!$items): ?>
 <p class="vacio">No hay avisos nuevos para moderar.</p>
 <?php endif ?>
@@ -94,7 +94,7 @@ use App\Services\Csrf;
 
 <?php if ($sinConfirmar): ?>
 <details class="seccion">
-  <summary><strong><?= count($sinConfirmar) ?> sin confirmar el email</strong> <span class="nota">(se borran solos a las <?= $horas ?> h)</span></summary>
+  <summary><strong><?= count($sinConfirmar) ?> del formulario anónimo viejo, sin confirmar el email</strong> <span class="nota">(se borran solos a las <?= $horas ?> h)</span></summary>
   <div class="tabla-envoltorio">
   <table class="tabla">
     <thead><tr><th>Aviso</th><th>Email</th><th>Recibido</th><th></th></tr></thead>

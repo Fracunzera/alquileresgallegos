@@ -4,100 +4,39 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Config;
 use App\Http;
-use App\Repositories\BarrioRepo;
 use App\Seo\Meta;
-use App\Services\AvisoService;
-use App\Services\Captcha;
-use App\Services\Bloqueos;
-use App\Services\Confirmacion;
 use App\Services\CuentaAuth;
-use App\Services\FormToken;
-use App\Services\Fotos;
-use App\Services\RateLimiter;
+use App\Services\Cuentas;
 use App\View;
 
 /**
- * Formulario público, sin registro. Lo que llega queda "pendiente" hasta que se modera.
- * Anti-spam sin captcha: campo trampa, token firmado con tiempo mínimo de llenado y límite por IP.
+ * /publicar: para publicar hace falta una cuenta (gratis, con email confirmado).
+ * Esta página explica cómo publicar y lleva al registro; con sesión iniciada va directo al formulario.
+ * Se mantiene indexable: "publicar alquiler gratis en Río Gallegos" es una búsqueda que conviene captar.
  */
 final class PublicarController
 {
-    private const SEGUNDOS_MINIMOS = 5;
-    private const SEGUNDOS_MAXIMOS = 3 * 3600;
-
     public function form(): string
     {
+        // Cambia según haya sesión o no: el navegador no la puede guardar en caché.
+        header('Cache-Control: private, no-cache');
         if (CuentaAuth::cuenta() !== null) {
             Http::redirigir('/cuenta/avisos/nuevo');
-        }
-        return $this->render(['tipo' => 'mensual', 'periodo' => 'mes', 'moneda' => 'ARS'], []);
-    }
-
-    public function enviar(): string
-    {
-        // Bots: el campo trampa está oculto para personas; si viene lleno se finge éxito.
-        if (Http::post('sitio_web') !== '' && Http::post('sitio_web') !== null) {
-            Http::redirigir('/publicar/gracias', 303);
-        }
-        if (!FormToken::valido((string) Http::post('_t'), 'publicar', self::SEGUNDOS_MINIMOS, self::SEGUNDOS_MAXIMOS)) {
-            return $this->render($_POST, ['general' => 'El formulario venció o se envió demasiado rápido. Revisá los datos y volvé a enviarlo.']);
-        }
-        if (!Captcha::valido()) {
-            return $this->render($_POST, ['general' => 'Completá la verificación de seguridad y volvé a enviar.']);
-        }
-        $clave = 'publicar:' . Http::ip();
-        $maximo = Config::int('PUBLICAR_MAX_POR_DIA', 5);
-        if (RateLimiter::excedido($clave, $maximo)) {
-            http_response_code(429);
-            return $this->render($_POST, ['general' => "Llegaste al máximo de {$maximo} avisos por día. Si sos inmobiliaria, escribinos para cargarlos juntos."]);
-        }
-
-        [$datos, $errores] = AvisoService::validar($_POST, true);
-        if (empty($_POST['acepto'])) {
-            $errores['acepto'] = 'Tenés que aceptar las condiciones para publicar.';
-        }
-        if ($errores) {
-            return $this->render($_POST, $errores);
-        }
-
-        RateLimiter::registrar($clave, 86400);
-        if (Bloqueos::coincide($datos['contacto_whatsapp'], $datos['contacto_email'], Http::ip())) {
-            error_log('Publicar: envío descartado por bloqueo (' . Http::ip() . ')');
-            Http::redirigir('/publicar/gracias', 303);
-        }
-        $id = AvisoService::crear($datos, 'formulario', 'pendiente', Http::ip());
-        Fotos::agregarSubidas($id, $_FILES['fotos'] ?? [], Config::int('FOTOS_MAX_POR_AVISO', 12));
-        Confirmacion::enviar($id);
-        Http::redirigir('/publicar/gracias', 303);
-    }
-
-    public function gracias(): string
-    {
-        header('Cache-Control: private, no-store');
-        return View::render('publicar-gracias', [
-            'meta' => new Meta(title: '¡Recibimos tu aviso!', description: 'Tu aviso está en revisión.', indexar: false),
-        ]);
-    }
-
-    /** @param array<string, mixed> $valores @param array<string, string> $errores */
-    private function render(array $valores, array $errores): string
-    {
-        header('Cache-Control: private, no-store');
-        if ($errores && http_response_code() === 200) {
-            http_response_code(422);
         }
         return View::render('publicar', [
             'meta' => new Meta(
                 title: 'Publicar alquiler gratis en Río Gallegos',
-                description: 'Publicá gratis tu casa, departamento o monoambiente en alquiler en Río Gallegos. Sin registrarte, con fotos y contacto directo por WhatsApp.',
+                description: 'Publicá gratis tu casa, departamento o monoambiente en alquiler en Río Gallegos. Creá tu cuenta en un minuto, cargá fotos y recibí consultas directo por WhatsApp.',
                 canonical: '/publicar',
             ),
-            'v' => $valores,
-            'err' => $errores,
-            'barrios' => (new BarrioRepo())->activos(),
-            'token' => FormToken::generar('publicar'),
+            'maxParticular' => Cuentas::maxParticular(),
         ]);
+    }
+
+    /** El formulario anónimo ya no existe: cualquier envío viejo o de un bot va al registro. */
+    public function enviar(): string
+    {
+        Http::redirigir('/cuenta/registro', 303);
     }
 }

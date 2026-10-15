@@ -4,7 +4,7 @@ $inmo = ($v['tipo'] ?? '') === 'inmobiliaria';
 ?>
 <div class="contenedor pagina-angosta">
   <h1>Crear una cuenta</h1>
-  <p class="intro">Para publicar y administrar varios avisos desde un panel: editarlos, pausarlos, marcarlos alquilados y ver cuántas visitas y consultas tienen. Es gratis.</p>
+  <p class="intro">Para publicar en <?= e(app_nombre()) ?> necesitás una cuenta. Es gratis y no lleva contraseña: te llega un link a tu email para entrar. Desde tu cuenta publicás, editás y pausás tus avisos, y ves cuántas visitas y consultas tienen.</p>
   <?php if (isset($err['general'])): ?><p class="alerta alerta-error"><?= e($err['general']) ?></p><?php endif ?>
   <form method="post" action="/cuenta/registro" class="formulario">
     <input type="hidden" name="_t" value="<?= e($token) ?>">

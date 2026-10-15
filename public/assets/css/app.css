@@ -235,3 +235,4 @@ textarea { min-height: 160px; resize: vertical; }
 .tarjeta-etiquetas { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
 .tarjeta-etiquetas span { font-size: .75rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: #e7f6ec; color: #14532d; }
 .filtros-checks { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.pasos { padding-left: 20px; display: grid; gap: 10px; }
