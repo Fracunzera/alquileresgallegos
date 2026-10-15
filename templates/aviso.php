@@ -54,9 +54,9 @@ $publicado = Catalogo::haceCuanto($aviso['publicado_en'] ?? $aviso['creado_en'])
       <dl class="ficha-datos">
         <div><dt>Tipo</dt><dd><?= $aviso['tipo'] === 'temporario' ? 'Temporario' : 'Mensual' ?></dd></div>
         <div><dt>Propiedad</dt><dd><?= e(Catalogo::CATEGORIAS[$aviso['categoria']]) ?></dd></div>
-        <?php if ($aviso['ambientes'] !== null): ?><div><dt>Ambientes</dt><dd><?= (int) $aviso['ambientes'] ?></dd></div><?php endif ?>
-        <?php if ($aviso['dormitorios'] !== null): ?><div><dt>Dormitorios</dt><dd><?= (int) $aviso['dormitorios'] ?></dd></div><?php endif ?>
-        <?php if ($aviso['banos'] !== null): ?><div><dt>Baños</dt><dd><?= (int) $aviso['banos'] ?></dd></div><?php endif ?>
+        <?php if (!empty($aviso['ambientes'])): ?><div><dt>Ambientes</dt><dd><?= (int) $aviso['ambientes'] ?></dd></div><?php endif ?>
+        <?php if (!empty($aviso['dormitorios'])): ?><div><dt>Dormitorios</dt><dd><?= (int) $aviso['dormitorios'] ?></dd></div><?php endif ?>
+        <?php if (!empty($aviso['banos'])): ?><div><dt>Baños</dt><dd><?= (int) $aviso['banos'] ?></dd></div><?php endif ?>
         <div><dt>Expensas</dt><dd><?= e($expensas ?? 'No informa') ?></dd></div>
         <?php if ($aviso['barrio_slug']): ?>
         <div><dt>Barrio</dt><dd><a href="<?= e(Catalogo::urlBarrio($aviso['barrio_slug'])) ?>"><?= e($aviso['barrio_nombre']) ?></a></dd></div>
