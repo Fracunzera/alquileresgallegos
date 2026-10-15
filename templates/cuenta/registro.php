@@ -30,6 +30,7 @@ $inmo = ($v['tipo'] ?? '') === 'inmobiliaria';
     </fieldset>
     <label class="campo-check"><input type="checkbox" name="acepto" value="1"<?= !empty($v['acepto']) ? ' checked' : '' ?> required> Voy a publicar solo propiedades reales en Río Gallegos que puedo alquilar.</label>
     <?= $error('acepto') ?>
+    <?= App\Services\Captcha::widget() ?>
     <button class="boton" type="submit">Crear cuenta</button>
   </form>
   <p>¿Ya tenés cuenta? <a href="/cuenta/ingresar">Entrá</a>.</p>

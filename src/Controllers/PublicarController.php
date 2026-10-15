@@ -9,6 +9,7 @@ use App\Http;
 use App\Repositories\BarrioRepo;
 use App\Seo\Meta;
 use App\Services\AvisoService;
+use App\Services\Captcha;
 use App\Services\Bloqueos;
 use App\Services\Confirmacion;
 use App\Services\CuentaAuth;
@@ -42,6 +43,9 @@ final class PublicarController
         }
         if (!FormToken::valido((string) Http::post('_t'), 'publicar', self::SEGUNDOS_MINIMOS, self::SEGUNDOS_MAXIMOS)) {
             return $this->render($_POST, ['general' => 'El formulario venció o se envió demasiado rápido. Revisá los datos y volvé a enviarlo.']);
+        }
+        if (!Captcha::valido()) {
+            return $this->render($_POST, ['general' => 'Completá la verificación de seguridad y volvé a enviar.']);
         }
         $clave = 'publicar:' . Http::ip();
         $maximo = Config::int('PUBLICAR_MAX_POR_DIA', 5);

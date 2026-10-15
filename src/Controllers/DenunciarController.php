@@ -10,6 +10,7 @@ use App\NoEncontrado;
 use App\Repositories\AvisoRepo;
 use App\Seo\Meta;
 use App\Services\Bloqueos;
+use App\Services\Captcha;
 use App\Services\Denuncias;
 use App\Services\FormToken;
 use App\Services\RateLimiter;
@@ -34,6 +35,9 @@ final class DenunciarController
         }
         if (!FormToken::valido((string) Http::post('_t'), 'denunciar', 3, 3 * 3600)) {
             return $this->render($aviso, $v, ['general' => 'El formulario venció o se envió demasiado rápido. Probá de nuevo.']);
+        }
+        if (!Captcha::valido()) {
+            return $this->render($aviso, $v, ['general' => 'Completá la verificación de seguridad y volvé a enviar.']);
         }
         $clave = 'denuncia:' . Http::ip();
         if (RateLimiter::excedido($clave, self::MAX_POR_DIA)) {

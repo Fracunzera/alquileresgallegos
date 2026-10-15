@@ -35,6 +35,7 @@ $error = static fn (string $c): string => isset($err[$c]) ? '<p class="error-cam
       </label>
       <?= $error('email') ?>
     </fieldset>
+    <?= App\Services\Captcha::widget() ?>
     <button class="boton" type="submit">Enviar denuncia</button>
   </form>
   <?php endif ?>

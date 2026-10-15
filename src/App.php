@@ -19,14 +19,15 @@ final class App
     public static function correr(): void
     {
         $path = Http::path();
+        Seguridad::enviarCabeceras();
+        if (Seguridad::pathPeligroso($path)) {
+            self::error(404, 'No encontramos esta página', '');
+            return;
+        }
         if ($path !== '/' && str_ends_with($path, '/')) {
             $query = $_SERVER['QUERY_STRING'] ?? '';
             Http::redirigir(rtrim($path, '/') . ($query !== '' ? '?' . $query : ''), 301);
         }
-
-        header('X-Content-Type-Options: nosniff');
-        header('X-Frame-Options: SAMEORIGIN');
-        header('Referrer-Policy: strict-origin-when-cross-origin');
 
         try {
             $cuerpo = self::router()->despachar(Http::metodo(), $path);
@@ -62,7 +63,7 @@ final class App
             header('Content-Type: text/html; charset=utf-8');
         }
         if (!$tiene('Cache-Control')) {
-            $privado = str_starts_with($path, '/admin') || isset($_COOKIE[Auth::COOKIE]) || Http::metodo() !== 'GET';
+            $privado = str_starts_with($path, '/admin') || isset($_COOKIE[Auth::COOKIE]) || !in_array(Http::metodo(), ['GET', 'HEAD'], true);
             header('Cache-Control: ' . ($privado ? 'private, no-store' : 'public, max-age=300'));
         }
     }

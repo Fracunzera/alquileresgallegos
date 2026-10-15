@@ -17,7 +17,7 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.classList.remove('sin-js')</script>
+<script><?= App\Seguridad::SCRIPT_INLINE ?></script>
 <title><?= e($meta->title) ?></title>
 <meta name="description" content="<?= e($meta->description) ?>">
 <?php if ($meta->canonical !== null): ?>

@@ -17,20 +17,35 @@ final class Auth
 {
     public const COOKIE = 'alq_sesion';
 
+    /** La sesión dura 30 días (anunciantes); la del admin vence a las 12 h sin actividad. */
+    private const DURACION = 30 * 86400;
+    private const INACTIVIDAD_ADMIN = 12 * 3600;
+
+    /** Hash bcrypt válido de una clave descartada: iguala el tiempo de respuesta cuando el email no existe. */
+    private const HASH_FALSO = '$2y$10$Ws1DwCYJGPQcSj3VDlCTLOgTeV5SPi9Bma.m5rzik3ITla5PgEqdy';
+
     public static function iniciarSesion(): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
             return;
         }
+        // Carpeta propia: en muchos servidores un cron del sistema borra /var/lib/php/sessions
+        // con su propio vencimiento e ignora gc_maxlifetime.
+        $carpeta = RAIZ . '/storage/sessions';
+        if (is_dir($carpeta) || @mkdir($carpeta, 0700, true)) {
+            session_save_path($carpeta);
+        }
+        ini_set('session.gc_maxlifetime', (string) self::DURACION);
+        ini_set('session.use_strict_mode', '1');
+        ini_set('session.use_only_cookies', '1');
         session_name(self::COOKIE);
         session_set_cookie_params([
-            'lifetime' => 0,
+            'lifetime' => self::DURACION,
             'path' => '/',
-            'secure' => ($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off',
+            'secure' => \App\Seguridad::sitioHttps() || (($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off'),
             'httponly' => true,
             'samesite' => 'Lax',
         ]);
-        ini_set('session.use_strict_mode', '1');
         session_start();
     }
 
@@ -40,7 +55,15 @@ final class Auth
             return false;
         }
         self::iniciarSesion();
-        return isset($_SESSION['admin_id']);
+        if (!isset($_SESSION['admin_id'])) {
+            return false;
+        }
+        if (time() - (int) ($_SESSION['admin_actividad'] ?? 0) > self::INACTIVIDAD_ADMIN) {
+            unset($_SESSION['admin_id'], $_SESSION['admin_nombre'], $_SESSION['admin_actividad']);
+            return false;
+        }
+        $_SESSION['admin_actividad'] = time();
+        return true;
     }
 
     public static function adminId(): ?int
@@ -64,7 +87,7 @@ final class Auth
     {
         $admin = Db::fila('SELECT * FROM admins WHERE email = ?', [mb_strtolower(trim($email))]);
         // Verificar contra un hash falso si no existe, para no revelar emails por timing.
-        $hash = $admin['password_hash'] ?? '$2y$10$usesomesillystringforsaltOdzcvmnUnrJkMVyamJSBdeQcGkW';
+        $hash = $admin['password_hash'] ?? self::HASH_FALSO;
         if (!password_verify($password, $hash) || $admin === null) {
             return false;
         }
@@ -75,6 +98,7 @@ final class Auth
         session_regenerate_id(true);
         $_SESSION['admin_id'] = (int) $admin['id'];
         $_SESSION['admin_nombre'] = $admin['nombre'];
+        $_SESSION['admin_actividad'] = time();
         Db::run('UPDATE admins SET ultimo_login = NOW() WHERE id = ?', [$admin['id']]);
         return true;
     }
@@ -82,7 +106,7 @@ final class Auth
     public static function logout(): void
     {
         self::iniciarSesion();
-        unset($_SESSION['admin_id'], $_SESSION['admin_nombre']);
+        unset($_SESSION['admin_id'], $_SESSION['admin_nombre'], $_SESSION['admin_actividad']);
         session_regenerate_id(true);
     }
 }

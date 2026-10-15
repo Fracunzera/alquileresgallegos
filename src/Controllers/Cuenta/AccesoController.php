@@ -8,6 +8,7 @@ use App\Db;
 use App\Http;
 use App\Seo\Meta;
 use App\Services\Bloqueos;
+use App\Services\Captcha;
 use App\Services\CuentaAuth;
 use App\Services\Csrf;
 use App\Services\Cuentas;
@@ -60,6 +61,9 @@ final class AccesoController
     {
         if (!$this->envioValido(3)) {
             return $this->render('cuenta/registro', 'Crear una cuenta', ['v' => $_POST, 'err' => ['general' => 'El formulario venció o se envió demasiado rápido. Probá de nuevo.']]);
+        }
+        if (!Captcha::valido()) {
+            return $this->render('cuenta/registro', 'Crear una cuenta', ['v' => $_POST, 'err' => ['general' => 'Completá la verificación de seguridad y volvé a enviar.']]);
         }
         [$datos, $err] = Cuentas::validarRegistro($_POST);
         if ($err) {

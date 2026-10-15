@@ -12,6 +12,8 @@
 !/storage/logs/.gitkeep
 /storage/cache/*
 !/storage/cache/.gitkeep
+/storage/sessions/*
+!/storage/sessions/.gitkeep
 
 # Herramientas
 .phpunit.cache/

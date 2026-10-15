@@ -22,6 +22,7 @@
     <label class="campo-check"><input type="checkbox" name="acepto" value="1"<?= !empty($v['acepto']) ? ' checked' : '' ?> required>
       Confirmo que la propiedad está en Río Gallegos, que los datos son reales y que puedo alquilarla.</label>
     <?php if (isset($err['acepto'])): ?><p class="error-campo"><?= e($err['acepto']) ?></p><?php endif ?>
+    <?= App\Services\Captcha::widget() ?>
     <button class="boton boton-whatsapp" type="submit">Enviar aviso para revisión</button>
     <p class="nota">Cuando lo aprobemos te avisamos por email. Los avisos se revisan periódicamente: cada tanto te vamos a preguntar si sigue disponible para que el sitio no tenga avisos viejos.</p>
   </form>

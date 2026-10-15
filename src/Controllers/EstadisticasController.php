@@ -17,8 +17,12 @@ final class EstadisticasController
         header('Cache-Control: no-store');
         $avisoId = (int) Http::post('aviso');
         $evento = (string) Http::post('evento');
+        $origen = $_SERVER['HTTP_ORIGIN'] ?? null;
+        $propio = $origen === null || parse_url($origen, PHP_URL_HOST) === parse_url((string) \App\Config::get('APP_URL'), PHP_URL_HOST)
+            || parse_url($origen, PHP_URL_HOST) === parse_url('//' . ($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST);
         if (
-            $avisoId > 0
+            $propio
+            && $avisoId > 0
             && isset(Estadisticas::EVENTOS[$evento])
             && !Estadisticas::esBot($_SERVER['HTTP_USER_AGENT'] ?? '')
             && Db::valor("SELECT id FROM avisos WHERE id = ? AND estado = 'activo'", [$avisoId]) !== null

@@ -27,7 +27,7 @@ use App\Services\Denuncias;
   </ul>
   <div class="acciones-estado">
     <?php foreach (['descartar' => 'Descartar (está bien)', 'alquilado' => 'Marcar alquilado', 'baja' => 'Dar de baja', 'bloquear' => 'Dar de baja y bloquear'] as $accion => $etiqueta): ?>
-    <form method="post" action="/admin/denuncias/<?= (int) $a['id'] ?>/<?= $accion ?>"<?= $accion === 'bloquear' ? " onsubmit=\"return confirm('¿Dar de baja y bloquear WhatsApp, email e IP del anunciante?')\"" : '' ?>>
+    <form method="post" action="/admin/denuncias/<?= (int) $a['id'] ?>/<?= $accion ?>"<?= $accion === 'bloquear' ? " data-confirmar=\"¿Dar de baja y bloquear WhatsApp, email e IP del anunciante?\"" : '' ?>>
       <?= Csrf::campo() ?>
       <button class="boton boton-chico<?= $accion === 'descartar' ? ' boton-secundario' : ($accion === 'bloquear' ? ' boton-peligro' : '') ?>" type="submit"><?= $etiqueta ?></button>
     </form>

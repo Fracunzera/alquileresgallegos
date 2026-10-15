@@ -67,7 +67,7 @@ $accion = $aviso ? '/admin/avisos/' . (int) $aviso['id'] : '/admin/avisos/nuevo'
 <?php endif ?>
 
 <section class="seccion zona-peligro">
-  <form method="post" action="/admin/avisos/<?= (int) $aviso['id'] ?>/borrar" onsubmit="return confirm('¿Borrar definitivamente este aviso y sus fotos?')">
+  <form method="post" action="/admin/avisos/<?= (int) $aviso['id'] ?>/borrar" data-confirmar="¿Borrar definitivamente este aviso y sus fotos?">
     <?= Csrf::campo() ?>
     <button class="boton boton-peligro boton-chico" type="submit">Borrar aviso</button>
     <span class="nota">Para sacarlo del sitio alcanza con pausarlo o marcarlo alquilado.</span>

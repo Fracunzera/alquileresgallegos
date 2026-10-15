@@ -48,7 +48,7 @@ use App\Services\Csrf;
   <div class="acciones-estado">
     <form method="post" action="/admin/cuentas/<?= (int) $c['id'] ?>/confiable"><?= Csrf::campo() ?>
       <button class="boton boton-chico boton-secundario" type="submit"><?= $c['confiable'] ? 'Quitar confiable' : 'Marcar confiable' ?></button></form>
-    <form method="post" action="/admin/cuentas/<?= (int) $c['id'] ?>/suspender"<?= $c['estado'] === 'activa' ? " onsubmit=\"return confirm('¿Suspender la cuenta y pausar sus avisos?')\"" : '' ?>><?= Csrf::campo() ?>
+    <form method="post" action="/admin/cuentas/<?= (int) $c['id'] ?>/suspender"<?= $c['estado'] === 'activa' ? " data-confirmar=\"¿Suspender la cuenta y pausar sus avisos?\"" : '' ?>><?= Csrf::campo() ?>
       <button class="boton boton-chico <?= $c['estado'] === 'activa' ? 'boton-peligro' : 'boton-secundario' ?>" type="submit"><?= $c['estado'] === 'activa' ? 'Suspender' : 'Reactivar cuenta' ?></button></form>
   </div>
 </article>

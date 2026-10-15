@@ -29,15 +29,18 @@ final class AuthController
     {
         Csrf::verificar();
         $clave = 'login:' . Http::ip();
-        if (RateLimiter::excedido($clave, self::MAX_INTENTOS)) {
+        $claveEmail = 'login-email:' . mb_strtolower(trim((string) Http::post('email')));
+        if (RateLimiter::excedido($clave, self::MAX_INTENTOS) || RateLimiter::excedido($claveEmail, self::MAX_INTENTOS * 2)) {
             http_response_code(429);
             return $this->form('Demasiados intentos. Esperá 15 minutos.');
         }
-        if (!Auth::login(Http::post('email') ?? '', $_POST['password'] ?? '')) {
+        if (!Auth::login(Http::post('email') ?? '', (string) ($_POST['password'] ?? ''))) {
             RateLimiter::registrar($clave, self::VENTANA);
+            RateLimiter::registrar($claveEmail, self::VENTANA);
             return $this->form('Email o contraseña incorrectos.');
         }
         RateLimiter::limpiar($clave);
+        RateLimiter::limpiar($claveEmail);
         Http::redirigir('/admin');
     }
 

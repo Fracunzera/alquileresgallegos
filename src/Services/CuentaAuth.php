@@ -55,6 +55,11 @@ final class CuentaAuth
         if ($cuenta === null) {
             return false;
         }
+        $clave = 'link-email:' . $cuenta['email'];
+        if (RateLimiter::excedido($clave, 5)) {
+            return false; // máximo 5 links por hora a la misma casilla
+        }
+        RateLimiter::registrar($clave, 3600);
         $token = bin2hex(random_bytes(24));
         Db::run(
             'INSERT INTO cuenta_tokens (cuenta_id, token_hash, vence_en) VALUES (?, ?, NOW() + INTERVAL ? MINUTE)',

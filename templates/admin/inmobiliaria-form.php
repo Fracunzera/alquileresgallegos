@@ -32,7 +32,7 @@ $error = static fn (string $c): string => isset($err[$c]) ? '<p class="error-cam
   <div class="botonera"><button class="boton" type="submit">Guardar</button><a href="/admin/inmobiliarias">Cancelar</a></div>
 </form>
 <?php if ($inmo): ?>
-<form method="post" action="/admin/inmobiliarias/<?= (int) $inmo['id'] ?>/borrar" class="zona-peligro" onsubmit="return confirm('¿Borrar la inmobiliaria?')">
+<form method="post" action="/admin/inmobiliarias/<?= (int) $inmo['id'] ?>/borrar" class="zona-peligro" data-confirmar="¿Borrar la inmobiliaria?">
   <?= Csrf::campo() ?><button class="boton boton-peligro boton-chico" type="submit">Borrar</button>
 </form>
 <?php endif ?>

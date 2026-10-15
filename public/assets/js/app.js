@@ -45,6 +45,12 @@
     select.addEventListener('change', function () { select.form.submit(); });
   });
 
+  // Confirmación antes de acciones destructivas (sin JS inline, para la Content-Security-Policy).
+  document.addEventListener('submit', function (ev) {
+    var mensaje = ev.target.getAttribute && ev.target.getAttribute('data-confirmar');
+    if (mensaje && !window.confirm(mensaje)) ev.preventDefault();
+  });
+
   // Estadísticas de la ficha: una visita por aviso y sesión del navegador, y clics en los botones de contacto.
   var ficha = document.querySelector('[data-aviso-id]');
   if (ficha && navigator.sendBeacon) {

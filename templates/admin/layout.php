@@ -20,7 +20,7 @@ if ($logueado) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.classList.remove('sin-js')</script>
+<script><?= App\Seguridad::SCRIPT_INLINE ?></script>
 <meta name="robots" content="noindex,nofollow">
 <title><?= e($titulo) ?> · Panel · <?= e(app_nombre()) ?></title>
 <link rel="icon" href="<?= e(asset('/assets/img/favicon.svg')) ?>" type="image/svg+xml">
