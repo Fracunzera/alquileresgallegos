@@ -51,6 +51,7 @@ cp .env.example .env            # completar DB_* y APP_URL=http://localhost:8000
 composer install
 php bin/migrate.php --seed      # crea tablas y siembra los barrios
 php bin/crear-admin.php         # crea el usuario del panel
+php bin/datos-demo.php 60       # opcional: avisos de prueba (no corre en producción)
 composer serve                  # http://localhost:8000
 ```
 

@@ -1,0 +1,6 @@
+# Las fotos se sirven como archivos estáticos; nada de acá se ejecuta.
+<FilesMatch "\.(php\d?|phtml|phar)$">
+    Require all denied
+</FilesMatch>
+Options -ExecCGI
+RemoveHandler .php .phtml .phar
