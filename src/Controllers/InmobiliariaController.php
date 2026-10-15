@@ -10,6 +10,7 @@ use App\Http;
 use App\NoEncontrado;
 use App\Repositories\AvisoRepo;
 use App\Repositories\InmobiliariaRepo;
+use App\Seo\JsonLd;
 use App\Seo\Meta;
 use App\View;
 
@@ -32,13 +33,18 @@ final class InmobiliariaController
 
         return View::render('inmobiliaria', [
             'meta' => new Meta(
-                title: "{$inmo['nombre']}: alquileres en Río Gallegos" . ($pagina > 1 ? " (página {$pagina})" : '') . ' | ' . app_nombre(),
+                title: "{$inmo['nombre']}: alquileres en Río Gallegos" . ($pagina > 1 ? " (página {$pagina})" : ''),
                 description: $description,
                 canonical: url_con($path, ['pagina' => $pagina > 1 ? $pagina : null]),
                 indexar: $resultado['total'] > 0,
                 prev: $pagina > 1 ? url_con($path, ['pagina' => $pagina > 2 ? $pagina - 1 : null]) : null,
                 next: $pagina < $ultima ? url_con($path, ['pagina' => $pagina + 1]) : null,
                 imagen: $inmo['logo'] ?: null,
+                jsonLd: [
+                    JsonLd::inmobiliaria($inmo),
+                    JsonLd::migas([['Inicio', '/'], [$inmo['nombre'], null]], $path),
+                    JsonLd::listado('Propiedades en alquiler de ' . $inmo['nombre'], $resultado['items'], ($pagina - 1) * AvisoRepo::POR_PAGINA),
+                ],
             ),
             'inmo' => $inmo,
             'items' => $resultado['items'],

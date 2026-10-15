@@ -9,6 +9,8 @@ try {
 } catch (Throwable) {
 }
 $ogImagen = url_abs($meta->imagen ?? '/assets/img/og-default.png');
+$ogAncho = $meta->imagen === null ? 1200 : $meta->imagenAncho;
+$ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
 ?>
 <!doctype html>
 <html lang="es-AR" class="sin-js">
@@ -39,6 +41,11 @@ $ogImagen = url_abs($meta->imagen ?? '/assets/img/og-default.png');
 <meta property="og:url" content="<?= e(url_abs($meta->canonical)) ?>">
 <?php endif ?>
 <meta property="og:image" content="<?= e($ogImagen) ?>">
+<?php if ($ogAncho && $ogAlto): ?>
+<meta property="og:image:width" content="<?= $ogAncho ?>">
+<meta property="og:image:height" content="<?= $ogAlto ?>">
+<?php endif ?>
+<meta property="og:image:alt" content="<?= e($meta->title) ?>">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0d3b66">
 <link rel="icon" href="<?= e(asset('/assets/img/favicon.svg')) ?>" type="image/svg+xml">

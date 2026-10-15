@@ -20,8 +20,18 @@ final class Meta
         public ?string $imagen = null,        // path de la imagen para Open Graph
         public string $ogTipo = 'website',
         public array $jsonLd = [],
+        public ?int $imagenAncho = null,
+        public ?int $imagenAlto = null,
     ) {
+        $this->title = self::conMarca($title);
         $this->description = self::recortar($description, 158);
+    }
+
+    /** Agrega " | Alquileres Río Gallegos" solo si el título sigue entrando en lo que muestra Google. */
+    public static function conMarca(string $title, int $max = 65): string
+    {
+        $sufijo = ' | ' . app_nombre();
+        return mb_strlen($title . $sufijo) <= $max ? $title . $sufijo : $title;
     }
 
     /** Recorta en límite de palabra y agrega "…" si hace falta. */

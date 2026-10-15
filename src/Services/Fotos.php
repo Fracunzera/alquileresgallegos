@@ -116,8 +116,36 @@ final class Fotos
                 imagedestroy($copia);
             }
         }
+        self::guardarOg($imagen, "{$destinoBase}-og.jpg");
         imagedestroy($imagen);
         return $resultado;
+    }
+
+    /**
+     * Versión 1200x630 en JPEG para Open Graph: la vista previa de WhatsApp no muestra bien WebP.
+     */
+    private static function guardarOg(\GdImage $imagen, string $destino): void
+    {
+        [$ancho, $alto] = [imagesx($imagen), imagesy($imagen)];
+        $proporcion = 1200 / 630;
+        // Recorte centrado a 1.91:1
+        if ($ancho / $alto > $proporcion) {
+            $recorteAlto = $alto;
+            $recorteAncho = (int) round($alto * $proporcion);
+        } else {
+            $recorteAncho = $ancho;
+            $recorteAlto = (int) round($ancho / $proporcion);
+        }
+        $og = imagecreatetruecolor(1200, 630);
+        imagecopyresampled($og, $imagen, 0, 0, (int) (($ancho - $recorteAncho) / 2), (int) (($alto - $recorteAlto) / 2), 1200, 630, $recorteAncho, $recorteAlto);
+        imagejpeg($og, $destino, 80);
+        imagedestroy($og);
+    }
+
+    /** URL de la imagen Open Graph de una foto, o null si no existe (fotos anteriores a esta versión). */
+    public static function urlOg(string $archivo): ?string
+    {
+        return is_file(self::directorioBase() . '/' . $archivo . '-og.jpg') ? '/uploads/' . $archivo . '-og.jpg' : null;
     }
 
     public static function borrar(int $fotoId): void
@@ -129,6 +157,7 @@ final class Fotos
         foreach (self::ANCHOS as $ancho) {
             @unlink(self::directorioBase() . '/' . $foto['archivo'] . "-{$ancho}.webp");
         }
+        @unlink(self::directorioBase() . '/' . $foto['archivo'] . '-og.jpg');
         Db::run('DELETE FROM aviso_fotos WHERE id = ?', [$fotoId]);
     }
 

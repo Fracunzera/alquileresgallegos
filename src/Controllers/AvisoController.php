@@ -8,7 +8,9 @@ use App\Catalogo;
 use App\Http;
 use App\NoEncontrado;
 use App\Repositories\AvisoRepo;
+use App\Seo\JsonLd;
 use App\Seo\Meta;
+use App\Services\Fotos;
 use App\Services\Auth;
 use App\View;
 
@@ -34,13 +36,21 @@ final class AvisoController
         $descripcionCorta = Catalogo::descripcionCorta($aviso);
         $datos = array_filter([Catalogo::precio($aviso), Catalogo::expensas($aviso), Catalogo::ambientes($aviso)]);
 
+        $mapa = self::mapa($aviso);
+        $migas = self::migas($aviso);
+        $og = $fotos ? Fotos::urlOg($fotos[0]['archivo']) : null;
+
         $meta = new Meta(
-            title: $aviso['titulo'] . ' | ' . $descripcionCorta . ', Río Gallegos',
+            title: $aviso['titulo'] . ' – ' . ($aviso['tipo'] === 'temporario' ? 'Alquiler temporario' : 'Alquiler')
+                . ($aviso['barrio_nombre'] ? ' en ' . $aviso['barrio_nombre'] : '') . ', Río Gallegos',
             description: implode('. ', $datos) . '. ' . $aviso['descripcion'],
             canonical: $url,
             indexar: $aviso['estado'] === 'activo',
-            imagen: $fotos ? Catalogo::urlFoto($fotos[0]['archivo'], 1200) : null,
+            imagen: $og,
             ogTipo: 'article',
+            jsonLd: [JsonLd::aviso($aviso, $fotos, $mapa), JsonLd::migas($migas, $url)],
+            imagenAncho: $og ? 1200 : null,
+            imagenAlto: $og ? 630 : null,
         );
 
         return View::render('aviso', [
@@ -49,8 +59,8 @@ final class AvisoController
             'fotos' => $fotos,
             'url' => $url,
             'similares' => $repo->similares($aviso),
-            'mapa' => self::mapa($aviso),
-            'migas' => self::migas($aviso),
+            'mapa' => $mapa,
+            'migas' => $migas,
             'conBarraContacto' => $aviso['estado'] === 'activo',
         ]);
     }

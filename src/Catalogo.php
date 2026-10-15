@@ -73,13 +73,13 @@ final class Catalogo
     public static function ambientes(array $aviso): string
     {
         $partes = [];
-        if ($aviso['ambientes'] !== null) {
+        if (!empty($aviso['ambientes'])) {
             $partes[] = $aviso['ambientes'] . ' amb.';
         }
-        if ($aviso['dormitorios'] !== null) {
+        if (!empty($aviso['dormitorios'])) {
             $partes[] = $aviso['dormitorios'] . ' dorm.';
         }
-        if ($aviso['banos'] !== null) {
+        if (!empty($aviso['banos'])) {
             $partes[] = $aviso['banos'] . ((int) $aviso['banos'] === 1 ? ' baño' : ' baños');
         }
         return implode(' · ', $partes);

@@ -10,6 +10,7 @@ use App\Http;
 use App\NoEncontrado;
 use App\Repositories\AvisoRepo;
 use App\Repositories\BarrioRepo;
+use App\Seo\JsonLd;
 use App\Seo\Landings;
 use App\Seo\Meta;
 use App\View;
@@ -100,20 +101,25 @@ final class LandingController
             $description = "Página {$pagina}. " . $description;
         }
 
-        $meta = new Meta(
-            title: $title . ' | ' . app_nombre(),
-            description: $description,
-            canonical: $q['activos'] || $buscador ? $path : url_con($path, ['pagina' => $pagina > 1 ? $pagina : null]),
-            indexar: !$q['activos'] && !$buscador && $stats['total'] > 0,
-            prev: $pagina > 1 ? url_con($path, $q['query'] + ['pagina' => $pagina > 2 ? $pagina - 1 : null]) : null,
-            next: $pagina < $ultima ? url_con($path, $q['query'] + ['pagina' => $pagina + 1]) : null,
-        );
-
         $migas = [['Inicio', '/']];
         if ($barrio !== null) {
             $migas[] = ['Barrios', '/#barrios'];
         }
         $migas[] = [$def['h1'], null];
+
+        $meta = new Meta(
+            title: $title,
+            description: $description,
+            canonical: $q['activos'] || $buscador ? $path : url_con($path, ['pagina' => $pagina > 1 ? $pagina : null]),
+            indexar: !$q['activos'] && !$buscador && $stats['total'] > 0,
+            prev: $pagina > 1 ? url_con($path, $q['query'] + ['pagina' => $pagina > 2 ? $pagina - 1 : null]) : null,
+            next: $pagina < $ultima ? url_con($path, $q['query'] + ['pagina' => $pagina + 1]) : null,
+            jsonLd: [
+                JsonLd::migas($migas, $path),
+                JsonLd::listado($def['h1'], $resultado['items'], ($pagina - 1) * AvisoRepo::POR_PAGINA),
+            ],
+        );
+
 
         return View::render('landing', [
             'meta' => $meta,

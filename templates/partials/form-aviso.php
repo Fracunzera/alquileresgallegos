@@ -33,6 +33,7 @@ $descripcion = '
     <input type="text" name="fuente_url" value="<?= e($val('fuente_url')) ?>" placeholder="Link al posteo de Facebook o a la web de la inmobiliaria">
     <small>No se muestra en el sitio. Sirve para volver a verificar.</small>
   </label>
+  <?= $error('fuente_url') ?>
 </fieldset>
 <?php endif ?>
 

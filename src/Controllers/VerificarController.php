@@ -52,7 +52,7 @@ final class VerificarController
             http_response_code(404);
         }
         return View::render('verificar', [
-            'meta' => new Meta(title: 'Confirmá tu aviso | ' . app_nombre(), description: 'Confirmá si tu aviso sigue disponible.', indexar: false),
+            'meta' => new Meta(title: 'Confirmá tu aviso', description: 'Confirmá si tu aviso sigue disponible.', indexar: false),
             'aviso' => $aviso,
             'token' => $token,
             'mensaje' => $mensaje,

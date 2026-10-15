@@ -8,6 +8,7 @@ use App\Controllers\HomeController;
 use App\Controllers\InmobiliariaController;
 use App\Controllers\LandingController;
 use App\Controllers\PublicarController;
+use App\Controllers\SeoController;
 use App\Controllers\VerificarController;
 use App\Router;
 use App\Seo\Landings;
@@ -23,6 +24,8 @@ return static function (Router $r): void {
     $r->get('/aviso/{id:\d+}-{slug:[a-z0-9-]*}', [AvisoController::class, 'ver']);
     $r->get('/aviso/{id:\d+}', fn (string $id) => (new AvisoController())->ver($id, ''));
     $r->get('/inmobiliaria/{slug:[a-z0-9-]+}', [InmobiliariaController::class, 'ver']);
+    $r->get('/sitemap.xml', [SeoController::class, 'sitemap']);
+    $r->get('/robots.txt', [SeoController::class, 'robots']);
     $r->get('/publicar', [PublicarController::class, 'form']);
     $r->post('/publicar', [PublicarController::class, 'enviar']);
     $r->get('/publicar/gracias', [PublicarController::class, 'gracias']);

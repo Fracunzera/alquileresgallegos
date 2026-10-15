@@ -142,6 +142,9 @@ final class AvisoService
             $d['destacado'] = !empty($entrada['destacado']) ? 1 : 0;
             $fuente = mb_substr($txt('fuente_url'), 0, 500);
             $d['fuente_url'] = $fuente !== '' ? $fuente : null;
+            if ($fuente !== '' && !preg_match('#^https?://#i', $fuente)) {
+                $err['fuente_url'] = 'La fuente tiene que ser un link (https://…).';
+            }
         }
 
         return [$d, $err];

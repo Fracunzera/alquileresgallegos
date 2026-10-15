@@ -74,7 +74,7 @@ final class App
         header('Cache-Control: no-store');
         try {
             echo View::render('error', [
-                'meta' => new Meta(title: $titulo . ' | ' . app_nombre(), description: $texto, indexar: false),
+                'meta' => new Meta(title: $titulo, description: $texto, indexar: false),
                 'codigo' => $codigo,
                 'titulo' => $titulo,
                 'texto' => $texto,

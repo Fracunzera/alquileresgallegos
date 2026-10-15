@@ -8,6 +8,7 @@ use App\Db;
 use App\Repositories\AvisoRepo;
 use App\Repositories\BarrioRepo;
 use App\Repositories\InmobiliariaRepo;
+use App\Seo\JsonLd;
 use App\Seo\Meta;
 use App\View;
 
@@ -26,9 +27,10 @@ final class HomeController
 
         return View::render('home', [
             'meta' => new Meta(
-                title: 'Alquileres en Río Gallegos: casas, departamentos y temporarios | ' . app_nombre(),
+                title: 'Alquileres en Río Gallegos: casas, departamentos y temporarios',
                 description: $description,
                 canonical: '/',
+                jsonLd: [JsonLd::sitio(), JsonLd::listado('Últimos alquileres publicados en Río Gallegos', $recientes['items'], 0)],
             ),
             'recientes' => $recientes['items'],
             'total' => $recientes['total'],

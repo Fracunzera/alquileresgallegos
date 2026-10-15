@@ -61,7 +61,7 @@ final class PublicarController
     {
         header('Cache-Control: private, no-store');
         return View::render('publicar-gracias', [
-            'meta' => new Meta(title: '¡Recibimos tu aviso! | ' . app_nombre(), description: 'Tu aviso está en revisión.', indexar: false),
+            'meta' => new Meta(title: '¡Recibimos tu aviso!', description: 'Tu aviso está en revisión.', indexar: false),
         ]);
     }
 
@@ -91,7 +91,7 @@ final class PublicarController
         }
         return View::render('publicar', [
             'meta' => new Meta(
-                title: 'Publicar alquiler gratis en Río Gallegos | ' . app_nombre(),
+                title: 'Publicar alquiler gratis en Río Gallegos',
                 description: 'Publicá gratis tu casa, departamento o monoambiente en alquiler en Río Gallegos. Sin registrarte, con fotos y contacto directo por WhatsApp.',
                 canonical: '/publicar',
             ),
