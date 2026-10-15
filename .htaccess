@@ -1,0 +1,17 @@
+# Red de seguridad para hosting compartido: si el proyecto entero quedó dentro de public_html
+# (en vez de apuntar el document root a public/), todo se sirve desde public/ y nada de afuera
+# (.env, storage/, src/, vendor/, database/) es accesible por web.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

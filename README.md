@@ -18,8 +18,8 @@ Si una funcionalidad nueva no funciona con JavaScript desactivado, está mal hec
 
 ## Stack
 
-- PHP 8.2+ sin framework (router propio, PDO, plantillas PHP con escape).
-- MySQL 8 o MariaDB 10.6+.
+- PHP 8.3+ sin framework (router propio, PDO, plantillas PHP con escape). **Recomendado: PHP 8.4.**
+- MySQL 8.4 LTS o MariaDB 10.11/11.4 (MySQL 8.0 ya no tiene soporte).
 - GD para procesar fotos (redimensiona y convierte a WebP).
 - Leaflet + OpenStreetMap para mapas (servido localmente, se carga solo si hace falta).
 - Composer solo para el autoload y PHPUnit. No hay paso de build.
@@ -118,14 +118,23 @@ anunciante, en el admin y en el mensaje de "¿sigue disponible?". Son aproximada
 
 ## Despliegue
 
+> Antes de publicar, recorré el **checklist de [docs/SEGURIDAD.md](docs/SEGURIDAD.md)**.
+
 - **Apache / hosting compartido (cPanel):** apuntar el document root a `public/`.
-  El `public/.htaccess` ya redirige todo a `index.php`.
+  El `public/.htaccess` ya redirige todo a `index.php`. Si el hosting no deja cambiar el document
+  root y el proyecto queda entero en `public_html`, el `.htaccess` de la raíz manda todo a
+  `public/` y bloquea el resto (`.env`, `storage/`, `src/`…).
+- En producción no hace falta `composer install`: el sitio tiene autoload propio (Composer es
+  solo para correr los tests).
 - **nginx:**
 
   ```nginx
   root /ruta/al/proyecto/public;
   location / { try_files $uri /index.php?$query_string; }
-  location ~ \.php$ { include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_pass unix:/run/php/php8.2-fpm.sock; }
+  location ^~ /uploads/ { location ~ \.php$ { deny all; } }   # nunca ejecutar PHP subido
+  location ~ /\. { deny all; }
+  location = /index.php { include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root/index.php; fastcgi_pass unix:/run/php/php8.4-fpm.sock; }
+  location ~ \.php$ { return 404; }                            # el único PHP público es index.php
   ```
 
 - **Cron diario** (frescura de avisos):
