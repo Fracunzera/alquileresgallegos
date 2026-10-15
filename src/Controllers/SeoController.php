@@ -80,6 +80,7 @@ final class SeoController
             'User-agent: *',
             'Disallow: /admin',
             'Disallow: /verificar/',
+            'Disallow: /confirmar/',
             'Disallow: /publicar/gracias',
             'Disallow: /buscar',
             '',

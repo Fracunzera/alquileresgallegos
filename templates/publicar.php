@@ -1,7 +1,7 @@
 <?php /** @var array<string, mixed> $v @var array<string, string> $err @var list<array<string, mixed>> $barrios @var string $token */ ?>
 <div class="contenedor pagina-angosta">
   <h1>Publicá tu alquiler gratis</h1>
-  <p class="intro">Sin registrarte. Revisamos cada aviso antes de publicarlo, normalmente en menos de 24 horas. Te contactan directo por WhatsApp.</p>
+  <p class="intro">Sin registrarte. Te llega un email para confirmar el aviso; después lo revisamos y lo publicamos, normalmente en menos de 24 horas. Te contactan directo por WhatsApp.</p>
 
   <?php if ($err): ?>
   <div class="alerta alerta-error" role="alert">
@@ -21,6 +21,6 @@
       Confirmo que la propiedad está en Río Gallegos, que los datos son reales y que puedo alquilarla.</label>
     <?php if (isset($err['acepto'])): ?><p class="error-campo"><?= e($err['acepto']) ?></p><?php endif ?>
     <button class="boton boton-whatsapp" type="submit">Enviar aviso para revisión</button>
-    <p class="nota">Los avisos se revisan periódicamente: cada tanto te vamos a preguntar si sigue disponible para que el sitio no tenga avisos viejos.</p>
+    <p class="nota">Cuando lo aprobemos te avisamos por email. Los avisos se revisan periódicamente: cada tanto te vamos a preguntar si sigue disponible para que el sitio no tenga avisos viejos.</p>
   </form>
 </div>

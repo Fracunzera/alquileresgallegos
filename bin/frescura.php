@@ -31,6 +31,9 @@ if (in_array('--solicitar', $argv, true) && Config::get('NOTIFICADOR', 'null') !
     echo "[{$fecha}] Pedidos de confirmación enviados: {$enviados}\n";
 }
 
+$borrados = App\Services\Confirmacion::limpiarVencidos();
+echo "[{$fecha}] Avisos sin confirmar borrados: {$borrados}\n";
+
 if (Config::bool('FRESCURA_AUTODESPUBLICAR')) {
     $pausados = ColaVerificacion::despublicarSinRespuesta();
     echo "[{$fecha}] Pausados por falta de respuesta: " . count($pausados) . ($pausados ? ' (n.º ' . implode(', ', $pausados) . ')' : '') . "\n";

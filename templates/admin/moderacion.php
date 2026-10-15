@@ -1,10 +1,13 @@
 <?php
-/** @var list<array<string, mixed>> $items @var list<array<string, mixed>> $barrios @var list<string> $motivos */
+/**
+ * @var list<array<string, mixed>> $items @var list<array<string, mixed>> $barrios @var list<string> $motivos
+ * @var list<array<string, mixed>> $sinConfirmar @var int $horas
+ */
 use App\Catalogo;
 use App\Services\Csrf;
 ?>
 <h1>Moderación</h1>
-<p class="nota">Avisos enviados desde /publicar, los más viejos primero. Al aprobar se publican y cuentan como verificados hoy.</p>
+<p class="nota">Avisos enviados desde /publicar con el email confirmado, los más viejos primero. Al aprobar se publican, cuentan como verificados hoy y se le avisa por email a quien publicó.</p>
 <?php if (!$items): ?>
 <p class="vacio">No hay avisos para moderar.</p>
 <?php endif ?>
@@ -57,3 +60,28 @@ use App\Services\Csrf;
   </form>
 </article>
 <?php endforeach ?>
+
+<?php if ($sinConfirmar): ?>
+<details class="seccion">
+  <summary><strong><?= count($sinConfirmar) ?> sin confirmar el email</strong> <span class="nota">(se borran solos a las <?= $horas ?> h)</span></summary>
+  <div class="tabla-envoltorio">
+  <table class="tabla">
+    <thead><tr><th>Aviso</th><th>Email</th><th>Recibido</th><th></th></tr></thead>
+    <tbody>
+      <?php foreach ($sinConfirmar as $s): ?>
+      <tr>
+        <td><a href="/admin/avisos/<?= (int) $s['id'] ?>">n.º <?= (int) $s['id'] ?> · <?= e($s['titulo']) ?></a></td>
+        <td><?= e($s['contacto_email']) ?></td>
+        <td><small><?= e($s['creado_en']) ?></small></td>
+        <td>
+          <form method="post" action="/admin/moderacion/<?= (int) $s['id'] ?>/confirmar-email">
+            <?= Csrf::campo() ?><button class="boton boton-chico boton-secundario" type="submit">Pasar a moderación</button>
+          </form>
+        </td>
+      </tr>
+      <?php endforeach ?>
+    </tbody>
+  </table>
+  </div>
+</details>
+<?php endif ?>

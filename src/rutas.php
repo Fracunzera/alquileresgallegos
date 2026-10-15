@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controllers\Admin;
 use App\Controllers\AvisoController;
+use App\Controllers\ConfirmarController;
 use App\Controllers\HomeController;
 use App\Controllers\InmobiliariaController;
 use App\Controllers\LandingController;
@@ -29,6 +30,8 @@ return static function (Router $r): void {
     $r->get('/publicar', [PublicarController::class, 'form']);
     $r->post('/publicar', [PublicarController::class, 'enviar']);
     $r->get('/publicar/gracias', [PublicarController::class, 'gracias']);
+    $r->get('/confirmar/{id:\d+}/{token:[a-f0-9]+}', [ConfirmarController::class, 'ver']);
+    $r->post('/confirmar/{id:\d+}/{token:[a-f0-9]+}', [ConfirmarController::class, 'confirmar']);
     $r->get('/verificar/{id:\d+}/{token:[a-f0-9]+}', [VerificarController::class, 'ver']);
     $r->post('/verificar/{id:\d+}/{token:[a-f0-9]+}', [VerificarController::class, 'responder']);
 
@@ -49,6 +52,7 @@ return static function (Router $r): void {
     $r->get('/admin/moderacion', [Admin\ModeracionController::class, 'index']);
     $r->post('/admin/moderacion/{id:\d+}/aprobar', [Admin\ModeracionController::class, 'aprobar']);
     $r->post('/admin/moderacion/{id:\d+}/rechazar', [Admin\ModeracionController::class, 'rechazar']);
+    $r->post('/admin/moderacion/{id:\d+}/confirmar-email', [Admin\ModeracionController::class, 'confirmarEmail']);
     $r->get('/admin/verificacion', [Admin\VerificacionController::class, 'index']);
     $r->post('/admin/verificacion/{id:\d+}/{accion:confirmar|solicitar|alquilado|pausar}', [Admin\VerificacionController::class, 'accion']);
     $r->get('/admin/inmobiliarias', [Admin\InmobiliariasController::class, 'index']);

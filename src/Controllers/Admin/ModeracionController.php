@@ -10,6 +10,7 @@ use App\Repositories\AvisoRepo;
 use App\Repositories\BarrioRepo;
 use App\Services\AvisoService;
 use App\Services\Auth;
+use App\Services\Confirmacion;
 use App\Services\Flash;
 
 /**
@@ -28,7 +29,7 @@ final class ModeracionController extends Base
     public function index(): string
     {
         $repo = new AvisoRepo();
-        $pendientes = Db::filas("SELECT id FROM avisos WHERE estado = 'pendiente' ORDER BY creado_en");
+        $pendientes = Db::filas("SELECT id FROM avisos WHERE estado = 'pendiente' AND email_confirmado_en IS NOT NULL ORDER BY creado_en");
         $items = array_map(fn ($fila) => $repo->porId((int) $fila['id']) + ['fotos' => $repo->fotos((int) $fila['id'])], $pendientes);
         foreach ($items as &$item) {
             // Mismo WhatsApp en otros avisos: ayuda a detectar duplicados e inmobiliarias encubiertas.
@@ -43,6 +44,11 @@ final class ModeracionController extends Base
             'items' => $items,
             'barrios' => (new BarrioRepo())->todos(),
             'motivos' => self::MOTIVOS,
+            'sinConfirmar' => Db::filas(
+                "SELECT id, titulo, contacto_email, creado_en, slug FROM avisos
+                 WHERE estado = 'pendiente' AND email_confirmado_en IS NULL ORDER BY creado_en DESC"
+            ),
+            'horas' => Confirmacion::horas(),
         ]);
     }
 
@@ -55,6 +61,7 @@ final class ModeracionController extends Base
         }
         try {
             AvisoService::cambiarEstado($avisoId, 'activo', null, Auth::adminId());
+            Confirmacion::avisarAprobado(Db::fila('SELECT * FROM avisos WHERE id = ?', [$avisoId]));
             Flash::ok("Aviso n.º {$avisoId} publicado.");
         } catch (\RuntimeException $e) {
             Flash::error($e->getMessage());
@@ -62,11 +69,21 @@ final class ModeracionController extends Base
         Http::redirigir('/admin/moderacion');
     }
 
+    /** Confirmar a mano un aviso cuyo email no se confirmó (ej. no le llegó el correo). */
+    public function confirmarEmail(string $id): string
+    {
+        Db::run("UPDATE avisos SET email_confirmado_en = NOW(), token_confirmacion = NULL WHERE id = ? AND estado = 'pendiente'", [self::id($id)]);
+        Flash::ok("Aviso n.º {$id} pasado a moderación.");
+        Http::redirigir('/admin/moderacion');
+    }
+
     public function rechazar(string $id): string
     {
         $avisoId = self::id($id);
         $motivo = trim((string) Http::post('motivo'));
-        AvisoService::cambiarEstado($avisoId, 'rechazado', $motivo !== '' ? mb_substr($motivo, 0, 255) : 'Rechazado', Auth::adminId());
+        $motivo = $motivo !== '' ? mb_substr($motivo, 0, 255) : 'Rechazado';
+        AvisoService::cambiarEstado($avisoId, 'rechazado', $motivo, Auth::adminId());
+        Confirmacion::avisarRechazado(Db::fila('SELECT * FROM avisos WHERE id = ?', [$avisoId]), $motivo);
         Flash::ok("Aviso n.º {$avisoId} rechazado.");
         Http::redirigir('/admin/moderacion');
     }

@@ -8,7 +8,7 @@ $logueado = Auth::estaLogueado();
 $flash = $logueado ? Flash::sacar() : [];
 $pendientes = $enCola = 0;
 if ($logueado) {
-    $pendientes = (int) App\Db::valor("SELECT COUNT(*) FROM avisos WHERE estado = 'pendiente'");
+    $pendientes = (int) App\Db::valor("SELECT COUNT(*) FROM avisos WHERE estado = 'pendiente' AND email_confirmado_en IS NOT NULL");
     $enCola = App\Frescura\ColaVerificacion::contar();
 }
 ?>

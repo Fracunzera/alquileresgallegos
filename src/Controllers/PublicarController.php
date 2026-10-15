@@ -9,6 +9,7 @@ use App\Http;
 use App\Repositories\BarrioRepo;
 use App\Seo\Meta;
 use App\Services\AvisoService;
+use App\Services\Confirmacion;
 use App\Services\FormToken;
 use App\Services\Fotos;
 use App\Services\RateLimiter;
@@ -55,6 +56,7 @@ final class PublicarController
         RateLimiter::registrar($clave, 86400);
         $id = AvisoService::crear($datos, 'formulario', 'pendiente', Http::ip());
         Fotos::agregarSubidas($id, $_FILES['fotos'] ?? [], Config::int('FOTOS_MAX_POR_AVISO', 12));
+        Confirmacion::enviar($id);
         Http::redirigir('/publicar/gracias', 303);
     }
 
