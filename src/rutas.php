@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Controllers\Admin;
 use App\Controllers\AvisoController;
 use App\Controllers\ConfirmarController;
+use App\Controllers\DenunciarController;
 use App\Controllers\HomeController;
 use App\Controllers\InmobiliariaController;
 use App\Controllers\LandingController;
@@ -23,6 +24,8 @@ return static function (Router $r): void {
     $r->get('/buscar', [LandingController::class, 'buscar']);
     $r->get('/alquileres-{slug:[a-z0-9-]+}-rio-gallegos', [LandingController::class, 'barrio']);
     $r->get('/aviso/{id:\d+}-{slug:[a-z0-9-]*}', [AvisoController::class, 'ver']);
+    $r->get('/aviso/{id:\d+}/denunciar', [DenunciarController::class, 'form']);
+    $r->post('/aviso/{id:\d+}/denunciar', [DenunciarController::class, 'enviar']);
     $r->get('/aviso/{id:\d+}', fn (string $id) => (new AvisoController())->ver($id, ''));
     $r->get('/inmobiliaria/{slug:[a-z0-9-]+}', [InmobiliariaController::class, 'ver']);
     $r->get('/sitemap.xml', [SeoController::class, 'sitemap']);
@@ -53,6 +56,8 @@ return static function (Router $r): void {
     $r->post('/admin/moderacion/{id:\d+}/aprobar', [Admin\ModeracionController::class, 'aprobar']);
     $r->post('/admin/moderacion/{id:\d+}/rechazar', [Admin\ModeracionController::class, 'rechazar']);
     $r->post('/admin/moderacion/{id:\d+}/bloquear', [Admin\ModeracionController::class, 'bloquear']);
+    $r->get('/admin/denuncias', [Admin\DenunciasController::class, 'index']);
+    $r->post('/admin/denuncias/{id:\d+}/{accion:descartar|alquilado|baja|bloquear}', [Admin\DenunciasController::class, 'resolver']);
     $r->get('/admin/bloqueos', [Admin\BloqueosController::class, 'index']);
     $r->post('/admin/bloqueos', [Admin\BloqueosController::class, 'crear']);
     $r->post('/admin/bloqueos/{id:\d+}/borrar', [Admin\BloqueosController::class, 'borrar']);

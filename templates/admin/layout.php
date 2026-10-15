@@ -6,10 +6,11 @@ use App\Services\Flash;
 
 $logueado = Auth::estaLogueado();
 $flash = $logueado ? Flash::sacar() : [];
-$pendientes = $enCola = 0;
+$pendientes = $enCola = $denuncias = 0;
 if ($logueado) {
     $pendientes = (int) App\Db::valor("SELECT COUNT(*) FROM avisos WHERE estado = 'pendiente' AND email_confirmado_en IS NOT NULL");
     $enCola = App\Frescura\ColaVerificacion::contar();
+    $denuncias = App\Services\Denuncias::avisosConDenuncias();
 }
 ?>
 <!doctype html>
@@ -42,6 +43,7 @@ if ($logueado) {
     <a href="/admin/avisos">Avisos</a>
     <a href="/admin/moderacion">Moderación<?= $pendientes ? " <span class=\"globo\">{$pendientes}</span>" : '' ?></a>
     <a href="/admin/verificacion">Verificación<?= $enCola ? " <span class=\"globo\">{$enCola}</span>" : '' ?></a>
+    <a href="/admin/denuncias">Denuncias<?= $denuncias ? " <span class=\"globo\">{$denuncias}</span>" : '' ?></a>
     <a href="/admin/inmobiliarias">Inmobiliarias</a>
     <a href="/admin/barrios">Barrios</a>
     <a href="/admin/bloqueos">Bloqueos</a>

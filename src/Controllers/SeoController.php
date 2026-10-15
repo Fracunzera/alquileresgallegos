@@ -81,6 +81,7 @@ final class SeoController
             'Disallow: /admin',
             'Disallow: /verificar/',
             'Disallow: /confirmar/',
+            'Disallow: /aviso/*/denunciar',
             'Disallow: /publicar/gracias',
             'Disallow: /buscar',
             '',

@@ -105,6 +105,9 @@ $publicado = Catalogo::haceCuanto($aviso['publicado_en'] ?? $aviso['creado_en'])
         <p class="verificado">✓ Disponibilidad verificada <?= e($verificado) ?></p>
         <?php endif ?>
         <p class="nota">Publicado <?= e($publicado) ?> · Aviso n.º <?= (int) $aviso['id'] ?></p>
+        <?php if ($activo): ?>
+        <p class="nota"><a href="<?= e(App\Services\Denuncias::urlDenunciar($aviso)) ?>" rel="nofollow">Denunciar este aviso</a></p>
+        <?php endif ?>
       </div>
     </aside>
   </div>

@@ -7,6 +7,8 @@ use App\Catalogo;
   <a class="tablero-dato" href="/admin/avisos?estado=activo"><strong><?= $conteo['activo'] ?></strong> activos</a>
   <a class="tablero-dato<?= $conteo['pendiente'] ? ' tablero-alerta' : '' ?>" href="/admin/moderacion"><strong><?= $conteo['pendiente'] ?></strong> para moderar</a>
   <a class="tablero-dato<?= $enCola ? ' tablero-alerta' : '' ?>" href="/admin/verificacion"><strong><?= $enCola ?></strong> para verificar</a>
+  <?php $den = App\Services\Denuncias::avisosConDenuncias(); ?>
+  <a class="tablero-dato<?= $den ? ' tablero-alerta' : '' ?>" href="/admin/denuncias"><strong><?= $den ?></strong> con denuncias</a>
   <a class="tablero-dato" href="/admin/avisos?estado=pausado"><strong><?= $conteo['pausado'] ?></strong> pausados</a>
   <a class="tablero-dato" href="/admin/avisos?estado=alquilado"><strong><?= $conteo['alquilado'] ?></strong> alquilados</a>
 </div>
