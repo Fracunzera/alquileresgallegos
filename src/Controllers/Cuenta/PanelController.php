@@ -61,6 +61,7 @@ final class PanelController
             'puede' => $puede,
             'motivo' => $motivo,
             'diasVerificacion' => ColaVerificacion::diasVerificacion(),
+            'diasGracia' => ColaVerificacion::diasGracia(),
             'pideClaveActual' => $this->cuenta['password_hash'] !== null && !CuentaAuth::entroPorLink(),
             'flash' => Flash::sacar(),
         ]);

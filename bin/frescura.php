@@ -5,9 +5,11 @@ declare(strict_types=1);
 /*
  * Cron diario de frescura de avisos.
  *  - Informa cuántos avisos hay en la cola de verificación.
- *  - Si FRESCURA_AUTODESPUBLICAR=1, pausa los que no respondieron al pedido en FRESCURA_DIAS_GRACIA días.
- *  - Con --solicitar, además genera y envía el pedido a los que todavía no lo tienen
- *    (solo tiene sentido con NOTIFICADOR=email|whatsapp; con null no se envía nada).
+ *  - Con --solicitar, manda el "¿ya lo alquilaste o sigue disponible?" a los que todavía no lo
+ *    recibieron (con NOTIFICADOR=email; los avisos sin email quedan en la cola del panel para
+ *    mandarlos a mano por WhatsApp) y un recordatorio FRESCURA_DIAS_RECORDATORIO días antes de pausar.
+ *  - Si FRESCURA_AUTODESPUBLICAR=1, pausa los que no respondieron en FRESCURA_DIAS_GRACIA días
+ *    y les avisa que lo pueden volver a publicar.
  *
  * Uso: php bin/frescura.php [--solicitar]
  */
@@ -21,14 +23,21 @@ $fecha = date('Y-m-d H:i');
 $pendientes = ColaVerificacion::pendientes();
 echo "[{$fecha}] En cola de verificación: " . count($pendientes) . "\n";
 
-if (in_array('--solicitar', $argv, true) && Config::get('NOTIFICADOR', 'null') !== 'null') {
+if (in_array('--solicitar', $argv, true)) {
+    $notificador = ColaVerificacion::notificador();
     $enviados = 0;
     foreach ($pendientes as $aviso) {
-        if ($aviso['verificacion_solicitada_en'] === null && ColaVerificacion::solicitar((int) $aviso['id'])['enviado']) {
+        if ($aviso['verificacion_solicitada_en'] !== null || !$notificador->puedeEnviar($aviso)) {
+            continue;
+        }
+        if (ColaVerificacion::solicitar((int) $aviso['id'])['enviado']) {
             $enviados++;
+        } else {
+            ColaVerificacion::anularSolicitud((int) $aviso['id']); // falló el envío: se reintenta mañana
         }
     }
     echo "[{$fecha}] Pedidos de confirmación enviados: {$enviados}\n";
+    echo "[{$fecha}] Recordatorios enviados: " . count(ColaVerificacion::recordarPorVencer()) . "\n";
 }
 
 $borrados = App\Services\Confirmacion::limpiarVencidos();

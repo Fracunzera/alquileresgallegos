@@ -20,7 +20,8 @@ final class VerificarController
 {
     public function ver(string $id, string $token): string
     {
-        return $this->pagina(ColaVerificacion::porToken((int) $id, $token), $token, null);
+        $elegida = in_array(Http::query('r'), ['disponible', 'alquilado'], true) ? (string) Http::query('r') : null;
+        return $this->pagina(ColaVerificacion::porToken((int) $id, $token), $token, null, $elegida);
     }
 
     public function responder(string $id, string $token): string
@@ -29,22 +30,34 @@ final class VerificarController
         if ($aviso === null) {
             return $this->pagina(null, $token, null);
         }
+        $avisoId = (int) $aviso['id'];
         $respuesta = Http::post('respuesta');
-        if ($respuesta === 'disponible' && $aviso['estado'] === 'activo') {
-            ColaVerificacion::confirmar((int) $aviso['id'], 'link');
-            $mensaje = '¡Gracias! Tu aviso sigue publicado. Te vamos a volver a preguntar en ' . ColaVerificacion::diasVerificacion() . ' días.';
-        } elseif ($respuesta === 'alquilado') {
-            AvisoService::cambiarEstado((int) $aviso['id'], 'alquilado', 'El anunciante avisó que se alquiló');
-            \App\Db::run('UPDATE avisos SET token_gestion = NULL, verificacion_solicitada_en = NULL WHERE id = ?', [$aviso['id']]);
-            $mensaje = '¡Felicitaciones! Marcamos el aviso como alquilado y ya no recibe consultas.';
-        } else {
+        $pausado = ColaVerificacion::pausadoSinRespuesta($aviso);
+        if ($aviso['estado'] !== 'activo' && !$pausado) {
             return $this->pagina($aviso, $token, null);
+        }
+        try {
+            if ($respuesta === 'disponible' && $pausado) {
+                AvisoService::cambiarEstado($avisoId, 'activo'); // cuenta como verificado y cierra el pedido
+                $mensaje = '¡Listo! Tu aviso está publicado de nuevo. Te vamos a volver a preguntar en ' . ColaVerificacion::diasVerificacion() . ' días.';
+            } elseif ($respuesta === 'disponible') {
+                ColaVerificacion::confirmar($avisoId, 'link');
+                $mensaje = '¡Gracias! Tu aviso sigue publicado. Te vamos a volver a preguntar en ' . ColaVerificacion::diasVerificacion() . ' días.';
+            } elseif ($respuesta === 'alquilado') {
+                AvisoService::cambiarEstado($avisoId, 'alquilado', 'El anunciante avisó que se alquiló');
+                ColaVerificacion::anularSolicitud($avisoId);
+                $mensaje = '¡Felicitaciones! Marcamos el aviso como alquilado y ya no recibe consultas.';
+            } else {
+                return $this->pagina($aviso, $token, null);
+            }
+        } catch (\RuntimeException $e) {
+            return $this->pagina($aviso, $token, null, null, $e->getMessage());
         }
         return $this->pagina(null, $token, $mensaje);
     }
 
     /** @param array<string, mixed>|null $aviso */
-    private function pagina(?array $aviso, string $token, ?string $mensaje): string
+    private function pagina(?array $aviso, string $token, ?string $mensaje, ?string $elegida = null, ?string $error = null): string
     {
         header('Cache-Control: private, no-store');
         header('X-Robots-Tag: noindex, nofollow');
@@ -56,6 +69,9 @@ final class VerificarController
             'aviso' => $aviso,
             'token' => $token,
             'mensaje' => $mensaje,
+            'elegida' => $elegida,
+            'error' => $error,
+            'pausado' => $aviso !== null && ColaVerificacion::pausadoSinRespuesta($aviso),
             'precio' => $aviso ? Catalogo::precio($aviso) : null,
         ]);
     }
