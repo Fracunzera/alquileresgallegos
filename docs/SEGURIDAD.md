@@ -12,7 +12,7 @@ protecciones tiene cada formulario, el checklist para el servidor y las versione
 | CSRF | OK. Todo POST del panel y de las cuentas exige token de sesión; cookie `SameSite=Lax`. Los formularios públicos llevan un token firmado. |
 | Control de acceso | OK. Todas las rutas `/admin` pasan por `Admin\Base` (sesión obligatoria) y en `/cuenta` cada acción verifica que el aviso sea de esa cuenta. |
 | Subida de fotos | OK. Solo JPEG/PNG/WebP verificados por contenido, máximo 40 MP, se re-codifican con GD (se descartan metadatos y GPS) y se guardan con nombre aleatorio `.webp`/`.jpg`. `uploads/.htaccess` impide ejecutar PHP. |
-| Contraseñas | OK. `password_hash` (bcrypt); el admin pide 10+ caracteres. Los anunciantes no tienen contraseña (link por email de un solo uso). |
+| Contraseñas | OK. `password_hash` (bcrypt). Admin: 10+ caracteres. Anunciantes: 8+ caracteres; la recuperación usa un link de un solo uso por email. |
 | Tokens (links por email) | OK. 192 bits aleatorios, en la base solo el hash SHA-256, un solo uso, vencimiento. Los links se confirman con POST (los filtros de correo y WhatsApp abren los GET). |
 | **Redirección abierta** | **Corregido.** `/\evil.com/` redirigía a `/\evil.com`, que los navegadores interpretan como `//evil.com` (otro sitio): servía para phishing con links "del portal". Ahora esos paths dan 404. |
 | **Cabeceras** | **Corregido.** Se agregaron Content-Security-Policy, Permissions-Policy, Cross-Origin-Opener-Policy y HSTS (si `APP_URL` es https). Se quitó `X-Powered-By` (mostraba la versión de PHP). |
@@ -32,7 +32,8 @@ varias barreras:
 |---|---|
 | `/publicar` | **Ya no recibe avisos anónimos:** para publicar hace falta una cuenta con email confirmado. Los avisos de cuentas nuevas pasan por **moderación** hasta que las marques como confiables; una cuenta problemática se suspende entera. |
 | `/cuenta/registro` | Campo trampa, token con tiempo mínimo, 5 cuentas por IP por día, lista de bloqueo, confirmación por email (primer ingreso) y moderación hasta marcar la cuenta confiable. |
-| `/cuenta/ingresar` | Token, 10 pedidos por IP por hora, 5 links por hora por casilla. Solo manda emails a cuentas existentes. |
+| `/cuenta/ingresar` | Email y contraseña (bcrypt). 10 intentos fallidos por IP y 10 por email cada 15 min. Las cuentas sin confirmar no entran (se reenvía el link). |
+| `/cuenta/recuperar` | Token, 10 pedidos por IP por hora, 5 links por hora por casilla. Solo manda emails a cuentas existentes y responde siempre lo mismo. |
 | `/aviso/{id}/denunciar` | Campo trampa, token, 10 denuncias por IP por día, una denuncia abierta por IP y aviso, lista de bloqueo. |
 | `/admin/login` | 5 intentos por IP y 10 por email cada 15 minutos. |
 

@@ -70,7 +70,7 @@ El panel de administración está en `/admin`.
 | `/inmobiliaria/{slug}` | Página de la inmobiliaria con sus avisos | sí, si tiene avisos |
 | `/publicar` | Cómo publicar: lleva a crear la cuenta (con sesión iniciada va directo al formulario) | sí |
 | `/aviso/{id}/denunciar` | Denuncia de un aviso (puede pausarlo solo) | no |
-| `/cuenta` | Panel del anunciante registrado (ingreso con link por email) | no |
+| `/cuenta` | Panel del anunciante registrado (ingreso con email y contraseña) | no |
 | `/buscar?…` | Buscador con varios filtros combinados | no |
 | `/sitemap.xml`, `/robots.txt` | Dinámicos | — |
 
@@ -80,9 +80,12 @@ con `rel=prev/next`.
 
 ## Cuentas de anunciantes (`/cuenta`)
 
-**Para publicar hace falta una cuenta** (gratis). Sin contraseña: se entra con un link de un solo uso
-que llega por email, así que toda cuenta tiene el email confirmado. En el primer ingreso, si la
-cuenta todavía no tiene avisos, va directo al formulario de aviso nuevo.
+**Para publicar hace falta una cuenta** (gratis). Se entra con **email y contraseña**. Al registrarse
+llega un link por email para confirmar la cuenta (sin confirmar no se puede entrar), así que toda
+cuenta tiene el email verificado. "¿Olvidaste tu contraseña?" manda un link de un solo uso para entrar
+y elegir una nueva desde *Mis datos*. En el primer ingreso, si la cuenta todavía no tiene avisos, va
+directo al formulario de aviso nuevo. Las cuentas creadas antes de las contraseñas entran por
+"¿Olvidaste tu contraseña?" y la eligen.
 
 - **Mi cuenta:** lista de avisos con estado, visitas y consultas de los últimos 30 días; acciones
   "sigue disponible", "ya se alquiló", pausar, volver a publicar, editar y fotos.

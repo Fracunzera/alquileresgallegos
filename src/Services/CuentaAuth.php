@@ -11,13 +11,57 @@ use App\Mail\Email;
 use App\Mail\Mail;
 
 /**
- * Ingreso de anunciantes sin contraseña: se manda un link de un solo uso por email.
- * Comparte la cookie de sesión con el panel (Auth); guarda solo su propia clave.
+ * Ingreso de anunciantes con email y contraseña. El link de un solo uso por email se usa para
+ * confirmar el email al registrarse y para recuperar la contraseña.
+ * Comparte la cookie de sesión con el panel (Auth); guarda solo sus propias claves.
  */
 final class CuentaAuth
 {
     /** @var array<string, mixed>|null|false false = todavía no se consultó */
     private static array|null|false $cuenta = false;
+
+    /** Hash bcrypt válido de una clave descartada: iguala el tiempo de respuesta cuando el email no existe. */
+    private const HASH_FALSO = '$2y$10$Ws1DwCYJGPQcSj3VDlCTLOgTeV5SPi9Bma.m5rzik3ITla5PgEqdy';
+
+    public const LOGIN_OK = 'ok';
+    public const LOGIN_INCORRECTO = 'incorrecto';
+    public const LOGIN_SIN_CONFIRMAR = 'sin_confirmar';
+
+    /**
+     * Ingreso con email y contraseña.
+     *
+     * @return string LOGIN_OK | LOGIN_INCORRECTO | LOGIN_SIN_CONFIRMAR (la clave es correcta pero falta
+     *                confirmar el email: se reenvía el link)
+     */
+    public static function loginConClave(string $email, string $clave): string
+    {
+        $cuenta = Db::fila("SELECT * FROM cuentas WHERE email = ? AND estado = 'activa'", [mb_strtolower(trim($email))]);
+        $hash = $cuenta['password_hash'] ?? null;
+        $valida = password_verify($clave, $hash ?? self::HASH_FALSO) && $hash !== null;
+        if (!$valida) {
+            return self::LOGIN_INCORRECTO;
+        }
+        if ($cuenta['email_confirmado_en'] === null) {
+            self::enviarLink((int) $cuenta['id'], true);
+            return self::LOGIN_SIN_CONFIRMAR;
+        }
+        if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+            Db::run('UPDATE cuentas SET password_hash = ? WHERE id = ?', [password_hash($clave, PASSWORD_DEFAULT), $cuenta['id']]);
+        }
+        self::iniciar((int) $cuenta['id'], false);
+        return self::LOGIN_OK;
+    }
+
+    public static function cambiarClave(int $cuentaId, string $clave): void
+    {
+        Db::run('UPDATE cuentas SET password_hash = ? WHERE id = ?', [password_hash($clave, PASSWORD_DEFAULT), $cuentaId]);
+    }
+
+    /** ¿Entró en esta sesión con un link del email? Entonces puede elegir contraseña sin la anterior. */
+    public static function entroPorLink(): bool
+    {
+        return self::cuenta() !== null && !empty($_SESSION['cuenta_por_link']);
+    }
 
     public static function minutosLink(): int
     {
@@ -67,11 +111,11 @@ final class CuentaAuth
         );
         $link = url_abs('/cuenta/entrar/' . $token);
         $saludo = $bienvenida
-            ? "¡Hola {$cuenta['nombre']}! Gracias por crear tu cuenta en " . app_nombre() . ".\n\nPara activarla y entrar, hacé clic acá:"
-            : "¡Hola {$cuenta['nombre']}!\n\nPara entrar a tu cuenta de " . app_nombre() . ', hacé clic acá:';
+            ? "¡Hola {$cuenta['nombre']}! Gracias por crear tu cuenta en " . app_nombre() . ".\n\nPara confirmar tu email y activar la cuenta, hacé clic acá:"
+            : "¡Hola {$cuenta['nombre']}!\n\nPara entrar a tu cuenta de " . app_nombre() . " y elegir una contraseña nueva, hacé clic acá:";
         return Mail::enviar(new Email(
             $cuenta['email'],
-            $bienvenida ? 'Activá tu cuenta' : 'Tu link para entrar',
+            $bienvenida ? 'Confirmá tu email' : 'Recuperá tu contraseña',
             "{$saludo}\n{$link}\n\nEl link sirve una sola vez y vence en " . self::minutosLink() . " minutos.\n"
             . "Si no lo pediste, ignorá este mensaje.\n\n— " . app_nombre()
         ));
@@ -106,19 +150,24 @@ final class CuentaAuth
                 [$fila['id'], $fila['email']]
             );
         }
-        Db::run('UPDATE cuentas SET ultimo_login = NOW() WHERE id = ?', [$fila['id']]);
+        self::iniciar((int) $fila['id'], true);
+        return true;
+    }
 
+    private static function iniciar(int $cuentaId, bool $porLink): void
+    {
+        Db::run('UPDATE cuentas SET ultimo_login = NOW() WHERE id = ?', [$cuentaId]);
         Auth::iniciarSesion();
         session_regenerate_id(true);
-        $_SESSION['cuenta_id'] = (int) $fila['id'];
+        $_SESSION['cuenta_id'] = $cuentaId;
+        $_SESSION['cuenta_por_link'] = $porLink;
         self::$cuenta = false;
-        return true;
     }
 
     public static function salir(): void
     {
         Auth::iniciarSesion();
-        unset($_SESSION['cuenta_id']);
+        unset($_SESSION['cuenta_id'], $_SESSION['cuenta_por_link']);
         session_regenerate_id(true);
         self::$cuenta = false;
     }
