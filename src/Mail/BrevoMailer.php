@@ -51,6 +51,9 @@ final class BrevoMailer implements Mailer
             'subject' => $email->asunto,
             'textContent' => $email->texto,
         ];
+        if ($email->html !== null) {
+            $payload['htmlContent'] = $email->html;
+        }
         if ($email->responderA !== null) {
             $payload['replyTo'] = ['email' => $email->responderA];
         }
