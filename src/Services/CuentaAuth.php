@@ -99,26 +99,53 @@ final class CuentaAuth
         if ($cuenta === null) {
             return false;
         }
-        $clave = 'link-email:' . $cuenta['email'];
-        if (RateLimiter::excedido($clave, 5)) {
-            return false; // máximo 5 links por hora a la misma casilla
+        if (self::limiteLinksExcedido($cuenta['email'])) {
+            return false;
         }
-        RateLimiter::registrar($clave, 3600);
-        $token = bin2hex(random_bytes(24));
+        RateLimiter::registrar('link-email:' . $cuenta['email'], 3600);
+        $token = bin2hex(random_bytes(16)); // 128 bits: link más corto, igual de imposible de adivinar
         Db::run(
             'INSERT INTO cuenta_tokens (cuenta_id, token_hash, vence_en) VALUES (?, ?, NOW() + INTERVAL ? MINUTE)',
             [$cuentaId, hash('sha256', $token), self::minutosLink()]
         );
         $link = url_abs('/cuenta/entrar/' . $token);
         $saludo = $bienvenida
-            ? "¡Hola {$cuenta['nombre']}! Gracias por crear tu cuenta en " . app_nombre() . ".\n\nPara confirmar tu email y activar la cuenta, hacé clic acá:"
-            : "¡Hola {$cuenta['nombre']}!\n\nPara entrar a tu cuenta de " . app_nombre() . " y elegir una contraseña nueva, hacé clic acá:";
+            ? ["¡Hola {$cuenta['nombre']}!", 'Gracias por crear tu cuenta en ' . app_nombre() . '. Para confirmar tu email y activar la cuenta, tocá el botón:']
+            : ["¡Hola {$cuenta['nombre']}!", 'Para entrar a tu cuenta de ' . app_nombre() . ' y elegir una contraseña nueva, tocá el botón:'];
+        $boton = $bienvenida ? 'Confirmar mi cuenta' : 'Entrar a mi cuenta';
+        $pie = 'El link sirve una sola vez y vence en ' . self::minutosLink() . " minutos. Abrilo en el navegador donde querés quedar logueado.\n"
+            . 'Si no lo pediste, ignorá este mensaje.';
         return Mail::enviar(new Email(
             $cuenta['email'],
             $bienvenida ? 'Confirmá tu email' : 'Recuperá tu contraseña',
-            "{$saludo}\n{$link}\n\nEl link sirve una sola vez y vence en " . self::minutosLink() . " minutos.\n"
-            . "Si no lo pediste, ignorá este mensaje.\n\n— " . app_nombre()
+            implode("\n\n", $saludo) . "\n\n{$link}\n\n{$pie}\n\n— " . app_nombre(),
+            null,
+            Email::htmlConBoton($saludo, $boton, $link, $pie . "\n— " . app_nombre()),
         ));
+    }
+
+    /** Máximo 5 links por hora a la misma casilla (que nadie use el sitio para llenarle el correo a otro). */
+    public static function limiteLinksExcedido(string $email): bool
+    {
+        return RateLimiter::excedido('link-email:' . mb_strtolower(trim($email)), 5);
+    }
+
+    /**
+     * Por qué un link no sirve, para explicarlo bien: usado | vencido | invalido (no existe:
+     * suele ser un link incompleto, cortado al copiarlo) | valido.
+     */
+    public static function estadoToken(string $token): string
+    {
+        $fila = Db::fila(
+            'SELECT usado_en, vence_en > NOW() AS vigente FROM cuenta_tokens WHERE token_hash = ?',
+            [hash('sha256', $token)]
+        );
+        return match (true) {
+            $fila === null => 'invalido',
+            $fila['usado_en'] !== null => 'usado',
+            !$fila['vigente'] => 'vencido',
+            default => 'valido',
+        };
     }
 
     /** @return array<string, mixed>|null token vigente sin usar, con datos de la cuenta */

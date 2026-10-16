@@ -13,7 +13,7 @@ protecciones tiene cada formulario, el checklist para el servidor y las versione
 | Control de acceso | OK. Todas las rutas `/admin` pasan por `Admin\Base` (sesión obligatoria) y en `/cuenta` cada acción verifica que el aviso sea de esa cuenta. |
 | Subida de fotos | OK. Solo JPEG/PNG/WebP verificados por contenido, máximo 40 MP, se re-codifican con GD (se descartan metadatos y GPS) y se guardan con nombre aleatorio `.webp`/`.jpg`. `uploads/.htaccess` impide ejecutar PHP. |
 | Contraseñas | OK. `password_hash` (bcrypt). Admin: 10+ caracteres. Anunciantes: 8+ caracteres; la recuperación usa un link de un solo uso por email. |
-| Tokens (links por email) | OK. 192 bits aleatorios, en la base solo el hash SHA-256, un solo uso, vencimiento. Los links se confirman con POST (los filtros de correo y WhatsApp abren los GET). |
+| Tokens (links por email) | OK. 128 bits aleatorios o más, en la base solo el hash SHA-256, un solo uso, vencimiento. Los links se confirman con POST (los filtros de correo y WhatsApp abren los GET). |
 | **Redirección abierta** | **Corregido.** `/\evil.com/` redirigía a `/\evil.com`, que los navegadores interpretan como `//evil.com` (otro sitio): servía para phishing con links "del portal". Ahora esos paths dan 404. |
 | **Cabeceras** | **Corregido.** Se agregaron Content-Security-Policy, Permissions-Policy, Cross-Origin-Opener-Policy y HSTS (si `APP_URL` es https). Se quitó `X-Powered-By` (mostraba la versión de PHP). |
 | **JavaScript inline** | **Corregido.** Los `onsubmit="confirm(...)"` del panel pasaron a `data-confirmar`; la CSP solo permite un script inline, autorizado por hash. |

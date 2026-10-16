@@ -73,8 +73,9 @@ final class AccesoController
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             return $this->render('cuenta/recuperar', 'Recuperar contraseña', ['v' => $_POST, 'err' => ['email' => 'Revisá el email.']]);
         }
-        if ($this->limiteExcedido('cuenta-link:' . Http::ip(), 10, 3600)) {
-            return $this->render('cuenta/recuperar', 'Recuperar contraseña', ['v' => $_POST, 'err' => ['general' => 'Pediste muchos links seguidos. Esperá un rato.']]);
+        if ($this->limiteExcedido('cuenta-link:' . Http::ip(), 10, 3600) || CuentaAuth::limiteLinksExcedido($email)) {
+            http_response_code(429);
+            return $this->render('cuenta/recuperar', 'Recuperar contraseña', ['v' => $_POST, 'err' => ['general' => 'Ya pediste varios links en la última hora. Usá el último que te llegó (los anteriores dejan de servir cuando entrás con uno) o esperá un rato.']]);
         }
         $id = Db::valor("SELECT id FROM cuentas WHERE email = ? AND estado = 'activa'", [$email]);
         if ($id !== null) {
@@ -125,7 +126,11 @@ final class AccesoController
         if ($fila === null) {
             http_response_code(404);
         }
-        return $this->render('cuenta/entrar', 'Entrar', ['valido' => $fila !== null, 'nombre' => $fila['nombre'] ?? null]);
+        return $this->render('cuenta/entrar', 'Entrar', [
+            'valido' => $fila !== null,
+            'nombre' => $fila['nombre'] ?? null,
+            'estado' => $fila !== null ? 'valido' : CuentaAuth::estadoToken($token),
+        ]);
     }
 
     /** El GET solo muestra un botón: los filtros de correo abren los links y gastarían el token. */
@@ -133,7 +138,7 @@ final class AccesoController
     {
         if (!CuentaAuth::entrar($token)) {
             http_response_code(404);
-            return $this->render('cuenta/entrar', 'Entrar', ['valido' => false, 'nombre' => null]);
+            return $this->render('cuenta/entrar', 'Entrar', ['valido' => false, 'nombre' => null, 'estado' => CuentaAuth::estadoToken($token)]);
         }
         $cuenta = CuentaAuth::cuenta();
         // Recuperación de contraseña o cuenta vieja sin contraseña: a elegirla.

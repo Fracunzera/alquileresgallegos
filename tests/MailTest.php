@@ -35,4 +35,17 @@ final class MailTest extends TestCase
         $this->assertFalse(FormToken::valido(FormToken::generar('publicar', time() - 7200), 'publicar', 5, 3600), 'vencido');
         $this->assertFalse(FormToken::valido('123.firmafalsa', 'publicar', 0, 3600));
     }
+
+    public function testHtmlConBotonEscapaYLlevaElLinkEnElHref(): void
+    {
+        $url = 'https://alquiler.blucaro.site/cuenta/entrar/' . str_repeat('a', 32);
+        $html = Email::htmlConBoton(['Hola <Ana>'], 'Entrar', $url, 'Pie');
+        $this->assertStringContainsString('href="' . $url . '"', $html);
+        $this->assertStringContainsString('Hola &lt;Ana&gt;', $html);
+        $this->assertStringNotContainsString('<Ana>', $html);
+
+        $payload = (new BrevoMailer('k', 'a@b.c', 'X'))->payload(new Email('d@e.f', 'Asunto', 'texto', null, $html));
+        $this->assertSame($html, $payload['htmlContent']);
+        $this->assertSame('texto', $payload['textContent']);
+    }
 }
