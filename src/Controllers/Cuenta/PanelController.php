@@ -61,6 +61,7 @@ final class PanelController
             'puede' => $puede,
             'motivo' => $motivo,
             'diasVerificacion' => ColaVerificacion::diasVerificacion(),
+            'pideClaveActual' => $this->cuenta['password_hash'] !== null && !CuentaAuth::entroPorLink(),
             'flash' => Flash::sacar(),
         ]);
     }
@@ -80,6 +81,25 @@ final class PanelController
             Flash::ok('Datos guardados.');
         }
         Http::redirigir('/cuenta#datos', 303);
+    }
+
+    /** Elegir o cambiar la contraseña. Pide la actual salvo que haya entrado con un link del email. */
+    public function clave(): string
+    {
+        $nueva = (string) ($_POST['clave'] ?? '');
+        if ($this->cuenta['password_hash'] !== null && !CuentaAuth::entroPorLink()
+            && !password_verify((string) ($_POST['clave_actual'] ?? ''), $this->cuenta['password_hash'])) {
+            Flash::error('La contraseña actual no es correcta.');
+            Http::redirigir('/cuenta#clave', 303);
+        }
+        $error = Cuentas::validarClave($nueva, (string) ($_POST['clave_repetida'] ?? ''));
+        if ($error !== null) {
+            Flash::error($error);
+        } else {
+            CuentaAuth::cambiarClave((int) $this->cuenta['id'], $nueva);
+            Flash::ok('Contraseña guardada. La próxima vez entrá con tu email y esta contraseña.');
+        }
+        Http::redirigir('/cuenta#clave', 303);
     }
 
     public function nuevo(): string

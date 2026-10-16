@@ -4,7 +4,7 @@ $inmo = ($v['tipo'] ?? '') === 'inmobiliaria';
 ?>
 <div class="contenedor pagina-angosta">
   <h1>Crear una cuenta</h1>
-  <p class="intro">Para publicar en <?= e(app_nombre()) ?> necesitás una cuenta. Es gratis y no lleva contraseña: te llega un link a tu email para entrar. Desde tu cuenta publicás, editás y pausás tus avisos, y ves cuántas visitas y consultas tienen.</p>
+  <p class="intro">Para publicar en <?= e(app_nombre()) ?> necesitás una cuenta. Es gratis: elegís una contraseña y confirmás tu email con un link. Desde tu cuenta publicás, editás y pausás tus avisos, y ves cuántas visitas y consultas tienen.</p>
   <?php if (isset($err['general'])): ?><p class="alerta alerta-error"><?= e($err['general']) ?></p><?php endif ?>
   <form method="post" action="/cuenta/registro" class="formulario">
     <input type="hidden" name="_t" value="<?= e($token) ?>">
@@ -23,8 +23,14 @@ $inmo = ($v['tipo'] ?? '') === 'inmobiliaria';
       <legend>Tus datos</legend>
       <label class="campo"><span>Nombre</span><input type="text" name="nombre" value="<?= e($v['nombre'] ?? '') ?>" required maxlength="120" autocomplete="name"></label>
       <?= $error('nombre') ?>
-      <label class="campo"><span>Email</span><input type="email" name="email" value="<?= e($v['email'] ?? '') ?>" required autocomplete="email"><small>Te llega un link para entrar; no usamos contraseñas.</small></label>
+      <label class="campo"><span>Email</span><input type="email" name="email" value="<?= e($v['email'] ?? '') ?>" required autocomplete="email"><small>Te mandamos un email para confirmarlo antes de activar la cuenta.</small></label>
       <?= $error('email') ?>
+      <div class="fila">
+        <label class="campo"><span>Contraseña</span><input type="password" name="clave" required minlength="<?= App\Services\Cuentas::CLAVE_MINIMO ?>" autocomplete="new-password"></label>
+        <label class="campo"><span>Repetila</span><input type="password" name="clave_repetida" required minlength="<?= App\Services\Cuentas::CLAVE_MINIMO ?>" autocomplete="new-password"></label>
+      </div>
+      <small>Mínimo <?= App\Services\Cuentas::CLAVE_MINIMO ?> caracteres.</small>
+      <?= $error('clave') ?>
       <label class="campo"><span>WhatsApp (opcional)</span><input type="tel" name="whatsapp" value="<?= e($v['whatsapp'] ?? '') ?>" placeholder="2966 15 123456"><small>Lo completamos solo en tus avisos nuevos.</small></label>
       <?= $error('whatsapp') ?>
     </fieldset>

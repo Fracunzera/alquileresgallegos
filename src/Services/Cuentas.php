@@ -28,6 +28,23 @@ final class Cuentas
         return Config::int('CUENTA_MAX_AVISOS_PARTICULAR', 3);
     }
 
+    public const CLAVE_MINIMO = 8;
+
+    /** Error para mostrar, o null si la contraseña sirve. */
+    public static function validarClave(string $clave, string $repetida): ?string
+    {
+        if (mb_strlen($clave) < self::CLAVE_MINIMO) {
+            return 'La contraseña tiene que tener al menos ' . self::CLAVE_MINIMO . ' caracteres.';
+        }
+        if (strlen($clave) > 72) {
+            return 'La contraseña es demasiado larga (máximo 72 caracteres).';
+        }
+        if ($clave !== $repetida) {
+            return 'Las dos contraseñas no coinciden.';
+        }
+        return null;
+    }
+
     /**
      * @param array<string, mixed> $entrada
      * @return array{0: array<string, mixed>, 1: array<string, string>}
@@ -59,6 +76,11 @@ final class Cuentas
                 $err['inmobiliaria'] = 'Escribí el nombre de la inmobiliaria.';
             }
         }
+        $errorClave = self::validarClave((string) ($entrada['clave'] ?? ''), (string) ($entrada['clave_repetida'] ?? ''));
+        if ($errorClave !== null) {
+            $err['clave'] = $errorClave;
+        }
+        $d['clave'] = (string) ($entrada['clave'] ?? '');
         if (empty($entrada['acepto'])) {
             $err['acepto'] = 'Tenés que aceptar las condiciones.';
         }
@@ -69,8 +91,8 @@ final class Cuentas
     public static function crear(array $d, string $ip): int
     {
         Db::run(
-            'INSERT INTO cuentas (email, nombre, whatsapp, tipo, inmobiliaria_solicitada, ip_registro) VALUES (?, ?, ?, ?, ?, ?)',
-            [$d['email'], $d['nombre'], $d['whatsapp'], $d['tipo'], $d['inmobiliaria_solicitada'], @inet_pton($ip) ?: null]
+            'INSERT INTO cuentas (email, password_hash, nombre, whatsapp, tipo, inmobiliaria_solicitada, ip_registro) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [$d['email'], password_hash($d['clave'], PASSWORD_DEFAULT), $d['nombre'], $d['whatsapp'], $d['tipo'], $d['inmobiliaria_solicitada'], @inet_pton($ip) ?: null]
         );
         $id = (int) Db::pdo()->lastInsertId();
         if ($d['tipo'] === 'inmobiliaria') {

@@ -43,6 +43,8 @@ return static function (Router $r): void {
     // Cuentas de anunciantes
     $r->get('/cuenta/ingresar', [Cuenta\AccesoController::class, 'ingresarForm']);
     $r->post('/cuenta/ingresar', [Cuenta\AccesoController::class, 'ingresar']);
+    $r->get('/cuenta/recuperar', [Cuenta\AccesoController::class, 'recuperarForm']);
+    $r->post('/cuenta/recuperar', [Cuenta\AccesoController::class, 'recuperar']);
     $r->get('/cuenta/registro', [Cuenta\AccesoController::class, 'registroForm']);
     $r->post('/cuenta/registro', [Cuenta\AccesoController::class, 'registro']);
     $r->get('/cuenta/entrar/{token:[a-f0-9]+}', [Cuenta\AccesoController::class, 'entrarForm']);
@@ -50,6 +52,7 @@ return static function (Router $r): void {
     $r->post('/cuenta/salir', [Cuenta\AccesoController::class, 'salir']);
     $r->get('/cuenta', [Cuenta\PanelController::class, 'inicio']);
     $r->post('/cuenta/datos', [Cuenta\PanelController::class, 'datos']);
+    $r->post('/cuenta/clave', [Cuenta\PanelController::class, 'clave']);
     $r->get('/cuenta/avisos/nuevo', [Cuenta\PanelController::class, 'nuevo']);
     $r->post('/cuenta/avisos/nuevo', [Cuenta\PanelController::class, 'crear']);
     $r->get('/cuenta/avisos/{id:\d+}', [Cuenta\PanelController::class, 'editar']);

@@ -2,6 +2,7 @@
 /**
  * @var array<string, mixed> $cuenta @var list<array<string, mixed>> $avisos @var array<int, array<string, int>> $stats
  * @var bool $puede @var ?string $motivo @var int $diasVerificacion @var list<array{0: string, 1: string}> $flash
+ * @var bool $pideClaveActual
  */
 use App\Catalogo;
 use App\Services\Csrf;
@@ -101,6 +102,27 @@ $boton = static function (int $id, string $accion, string $texto, string $clase 
         <small>Se usan para completar tus avisos nuevos.</small>
       </fieldset>
       <button class="boton boton-secundario" type="submit">Guardar datos</button>
+    </form>
+  </section>
+
+  <section class="seccion" id="clave">
+    <h2>Contraseña</h2>
+    <form method="post" action="/cuenta/clave" class="formulario">
+      <?= Csrf::campo() ?>
+      <fieldset>
+        <?php if ($cuenta['password_hash'] === null): ?>
+        <p class="nota">Todavía no tenés contraseña. Elegí una para entrar con tu email y contraseña, sin esperar un link.</p>
+        <?php endif ?>
+        <?php if ($pideClaveActual): ?>
+        <label class="campo"><span>Contraseña actual</span><input type="password" name="clave_actual" required autocomplete="current-password"></label>
+        <?php endif ?>
+        <div class="fila">
+          <label class="campo"><span>Contraseña nueva</span><input type="password" name="clave" required minlength="<?= Cuentas::CLAVE_MINIMO ?>" autocomplete="new-password"></label>
+          <label class="campo"><span>Repetila</span><input type="password" name="clave_repetida" required minlength="<?= Cuentas::CLAVE_MINIMO ?>" autocomplete="new-password"></label>
+        </div>
+        <small>Mínimo <?= Cuentas::CLAVE_MINIMO ?> caracteres.</small>
+      </fieldset>
+      <button class="boton boton-secundario" type="submit"><?= $cuenta['password_hash'] === null ? 'Crear contraseña' : 'Cambiar contraseña' ?></button>
     </form>
   </section>
 </div>
