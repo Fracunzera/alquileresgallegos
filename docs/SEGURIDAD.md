@@ -72,7 +72,7 @@ registra en el log, para que una caída de ellos no deje el sitio sin formulario
       proteger `/admin` con usuario y clave del servidor (Basic Auth) o limitarlo a tu IP.
 - [ ] Brevo con el dominio autenticado (SPF, DKIM y DMARC) para que los emails no vayan a spam.
 - [ ] **Backups** diarios de la base y de `public/uploads/` fuera del servidor.
-- [ ] Cron diario de `bin/frescura.php`.
+- [ ] Cron diario de `bin/frescura.php --solicitar` (pide confirmación a los 30 días y pausa a los que no responden).
 - [ ] No subir al servidor: `.git/`, `tests/`, `vendor/`, `.env` de desarrollo.
 
 ## 4. Versiones y avisos de seguridad conocidos (octubre de 2026)

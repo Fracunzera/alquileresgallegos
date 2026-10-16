@@ -175,17 +175,29 @@ Para pasar al dominio final (la base no guarda URLs absolutas, así que alcanza 
 
 ## Frescura de avisos
 
-Un aviso activo con más de `FRESCURA_DIAS_VERIFICACION` días (15 por defecto) sin verificar
-entra en la **cola de revisión** del panel. Desde ahí se puede:
+Para que no queden publicados avisos que ya se alquilaron:
 
-1. confirmar a mano que sigue disponible,
-2. marcarlo alquilado o pausarlo,
-3. pedir confirmación al anunciante: el panel arma el mensaje de WhatsApp con un link único
-   (`/verificar/{id}/{token}`) para que responda con un clic, sin registrarse.
+1. A los `FRESCURA_DIAS_VERIFICACION` días (30) de publicado o de la última confirmación, el cron
+   le manda al anunciante un email **"¿Ya lo alquilaste o sigue disponible?"** con dos botones
+   (link único `/verificar/{id}/{token}`, sin tener que entrar a la cuenta). Va al email de la
+   cuenta o, si el aviso lo cargó el admin, al email de contacto.
+2. `FRESCURA_DIAS_RECORDATORIO` días (3) antes del vencimiento le llega un recordatorio.
+3. Si en `FRESCURA_DIAS_GRACIA` días (10) no contestó, el aviso se **pausa**: sale del sitio y le
+   avisamos por email. No se borra: con el mismo link o desde su cuenta lo vuelve a publicar con
+   un clic (y conserva fotos y estadísticas).
 
-El envío automático está detrás de la interfaz `App\Frescura\Notificador`
-(`NOTIFICADOR=null|email|whatsapp`). Con `FRESCURA_AUTODESPUBLICAR=1`, el cron pausa los avisos
-que no respondieron en `FRESCURA_DIAS_GRACIA` días.
+"Sigue disponible" reinicia la cuenta de 30 días; "Ya lo alquilé" lo marca alquilado.
+
+Hace falta `NOTIFICADOR=email`, `FRESCURA_AUTODESPUBLICAR=1` y el cron diario con `--solicitar`:
+
+```
+15 10 * * * cd /var/www/alquileresgallegos && php bin/frescura.php --solicitar >> storage/logs/frescura.log 2>&1
+```
+
+Los avisos sin email (los que cargás vos desde Facebook) no se pausan solos: quedan en la **cola
+de revisión** del panel, donde podés confirmarlos, marcarlos alquilados o pausarlos, o pedir
+confirmación por WhatsApp (el panel arma el mensaje con el link). El envío está detrás de la
+interfaz `App\Frescura\Notificador` (`NOTIFICADOR=null|email|whatsapp`).
 
 ## Tests
 
