@@ -48,4 +48,14 @@ final class MailTest extends TestCase
         $this->assertSame($html, $payload['htmlContent']);
         $this->assertSame('texto', $payload['textContent']);
     }
+
+    public function testHtmlConBotonesMuestraTodosYElLinkDeRespaldoSinRespuesta(): void
+    {
+        $link = 'https://alquiler.blucaro.site/verificar/7/' . str_repeat('b', 48);
+        $html = Email::htmlConBotones(['¿Sigue disponible?'], ['Sigue disponible' => $link . '?r=disponible', 'Ya lo alquilé' => $link . '?r=alquilado'], 'Pie');
+        $this->assertStringContainsString('href="' . $link . '?r=disponible"', $html);
+        $this->assertStringContainsString('href="' . $link . '?r=alquilado"', $html);
+        $this->assertStringContainsString('los botones no funcionan', $html);
+        $this->assertStringContainsString('break-all">' . $link . '</span>', $html);
+    }
 }

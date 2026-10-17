@@ -1,10 +1,11 @@
 <?php
 /**
  * @var array<string, mixed> $cuenta @var list<array<string, mixed>> $avisos @var array<int, array<string, int>> $stats
- * @var bool $puede @var ?string $motivo @var int $diasVerificacion @var list<array{0: string, 1: string}> $flash
+ * @var bool $puede @var ?string $motivo @var int $diasVerificacion @var int $diasGracia @var list<array{0: string, 1: string}> $flash
  * @var bool $pideClaveActual
  */
 use App\Catalogo;
+use App\Frescura\ColaVerificacion;
 use App\Services\Csrf;
 use App\Services\Cuentas;
 use App\Services\Telefono;
@@ -70,8 +71,12 @@ $boton = static function (int $id, string $accion, string $texto, string $clase 
       <?php if ($a['estado'] === 'rechazado' || ($a['estado'] === 'pausado' && !$propio)): ?>
       <p class="error-campo"><?= e($a['motivo_estado'] ?: ($a['estado'] === 'pausado' ? 'Pausado por el equipo del sitio' : 'No aprobado')) ?><?= $a['estado'] === 'pausado' ? ' · Si es un error, respondé el email del sitio.' : ' · Podés corregirlo y se vuelve a revisar.' ?></p>
       <?php endif ?>
-      <?php if ($verificar): ?>
+      <?php if ($verificar && $a['verificacion_solicitada_en'] !== null): ?>
+      <p class="alerta alerta-error">¿Ya lo alquilaste o sigue disponible? Si no nos contestás antes del <?= e(date('d/m', strtotime((string) $a['verificacion_solicitada_en']) + $diasGracia * 86400)) ?>, lo sacamos del sitio.</p>
+      <?php elseif ($verificar): ?>
       <p class="alerta alerta-error">¿Sigue disponible? Confirmalo para que el aviso siga arriba.</p>
+      <?php elseif ($a['motivo_estado'] === ColaVerificacion::MOTIVO_SIN_RESPUESTA && $a['estado'] === 'pausado'): ?>
+      <p class="nota">Lo sacamos del sitio porque no confirmaste si seguía disponible. Si todavía no lo alquilaste, volvé a publicarlo.</p>
       <?php endif ?>
       <div class="acciones-estado">
         <?php if ($a['estado'] === 'activo'): ?>

@@ -23,15 +23,34 @@ final class Email
      */
     public static function htmlConBoton(array $parrafos, string $textoBoton, string $url, string $pie): string
     {
+        return self::htmlConBotones($parrafos, [$textoBoton => $url], $pie);
+    }
+
+    /**
+     * Igual que htmlConBoton, con varios botones (el primero es el principal).
+     *
+     * @param list<string> $parrafos texto plano (se escapa)
+     * @param array<string, string> $botones texto => url
+     */
+    public static function htmlConBotones(array $parrafos, array $botones, string $pie): string
+    {
         $e = static fn (string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
         $html = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:#1d2733;max-width:520px">';
         foreach ($parrafos as $parrafo) {
             $html .= '<p>' . nl2br($e($parrafo)) . '</p>';
         }
-        $html .= '<p style="margin:24px 0"><a href="' . $e($url) . '" style="background:#127a3e;color:#ffffff;padding:12px 20px;'
-            . 'border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">' . $e($textoBoton) . '</a></p>'
-            . '<p style="font-size:13px;color:#5a6675">Si el botón no funciona, copiá este link completo en el navegador:<br>'
-            . '<span style="word-break:break-all">' . $e($url) . '</span></p>'
+        $html .= '<p style="margin:24px 0">';
+        $primero = true;
+        foreach ($botones as $texto => $url) {
+            $colores = $primero ? 'background:#127a3e;color:#ffffff;border:2px solid #127a3e' : 'background:#ffffff;color:#127a3e;border:2px solid #127a3e';
+            $html .= '<a href="' . $e($url) . '" style="' . $colores . ';padding:10px 18px;border-radius:8px;text-decoration:none;'
+                . 'font-weight:bold;display:inline-block;margin:0 8px 8px 0">' . $e((string) $texto) . '</a>';
+            $primero = false;
+        }
+        // Con varios botones, el link de respaldo es la página que los muestra todos (sin elegir respuesta).
+        $url = count($botones) > 1 ? (string) strtok((string) reset($botones), '?') : (string) reset($botones);
+        $html .= '</p><p style="font-size:13px;color:#5a6675">Si ' . (count($botones) > 1 ? 'los botones no funcionan' : 'el botón no funciona')
+            . ', copiá este link completo en el navegador:<br><span style="word-break:break-all">' . $e($url) . '</span></p>'
             . '<p style="font-size:13px;color:#5a6675">' . nl2br($e($pie)) . '</p></div>';
         return $html;
     }

@@ -11,6 +11,11 @@ namespace App\Frescura;
  */
 final class WhatsappNotificador implements Notificador
 {
+    public function puedeEnviar(array $aviso): bool
+    {
+        return false;
+    }
+
     public function enviar(array $aviso, string $link, string $mensaje): bool
     {
         // TODO: POST https://graph.facebook.com/v{N}/{WHATSAPP_PHONE_ID}/messages con la plantilla aprobada.

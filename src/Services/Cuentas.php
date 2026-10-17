@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Config;
 use App\Db;
+use App\Frescura\ColaVerificacion;
 use App\Mail\Mail;
 
 /**
@@ -21,6 +22,7 @@ final class Cuentas
         'Pausado por el anunciante',
         'Marcado alquilado por el anunciante',
         'El anunciante avisó que se alquiló',
+        ColaVerificacion::MOTIVO_SIN_RESPUESTA, // no contestó el "¿sigue disponible?": lo puede volver a publicar
     ];
 
     public static function maxParticular(): int

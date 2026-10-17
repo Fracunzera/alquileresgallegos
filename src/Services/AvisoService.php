@@ -204,7 +204,8 @@ final class AvisoService
         $extra = '';
         if ($estado === 'activo') {
             // Al (re)activar cuenta como verificado y se cierra cualquier pedido de confirmación pendiente.
-            $extra = ', publicado_en = COALESCE(publicado_en, NOW()), ultima_verificacion = NOW(), verificacion_solicitada_en = NULL';
+            $extra = ', publicado_en = COALESCE(publicado_en, NOW()), ultima_verificacion = NOW(), verificacion_solicitada_en = NULL,'
+                . ' recordatorio_enviado_en = NULL, token_gestion = NULL';
         }
         Db::run("UPDATE avisos SET estado = ?, motivo_estado = ?{$extra} WHERE id = ?", [$estado, $motivo, $id]);
 
