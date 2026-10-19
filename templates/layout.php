@@ -94,6 +94,14 @@ $ogAlto = $meta->imagen === null ? 630 : $meta->imagenAlto;
         <?php endforeach ?>
       </ul>
     </section>
+    <section>
+      <h2>Guías para alquilar</h2>
+      <ul>
+        <?php foreach (App\Seo\Guias::todas() as $slugGuia => $guia): ?>
+        <li><a href="<?= e(App\Seo\Guias::url($slugGuia)) ?>"><?= e($guia['title']) ?></a></li>
+        <?php endforeach ?>
+      </ul>
+    </section>
     <?php if ($barriosFooter): ?>
     <section>
       <h2>Por barrio</h2>

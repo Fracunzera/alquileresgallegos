@@ -74,6 +74,13 @@ p { margin: 0 0 .75em; }
 .lista-barrios a { display: inline-block; padding: .4em .8em; border: 1px solid var(--borde); border-radius: 999px; background: var(--blanco); text-decoration: none; }
 .lista-barrios span { color: var(--texto-suave); font-size: .85em; }
 
+/* Guías */
+.guia { max-width: 760px; }
+.guia h2 { margin-top: 1.4em; }
+.lista-guias { padding-left: 1.1rem; }
+.lista-guias h2 { font-size: 1.1rem; margin: 1em 0 .2em; }
+.guia-fuentes, .guia-revision { font-size: .9rem; color: var(--texto-suave); }
+
 /* Listado */
 .encabezado-listado { margin: 8px 0 12px; }
 .intro { color: var(--texto-suave); max-width: 75ch; }
