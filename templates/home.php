@@ -77,6 +77,16 @@ use App\Catalogo;
   </section>
   <?php endif ?>
 
+  <section class="seccion">
+    <h2>Antes de alquilar</h2>
+    <ul class="lista-guias">
+      <?php foreach (App\Seo\Guias::todas() as $slugGuia => $guia): ?>
+      <li><a href="<?= e(App\Seo\Guias::url($slugGuia)) ?>"><?= e($guia['title']) ?></a></li>
+      <?php endforeach ?>
+    </ul>
+    <p><a href="/guias">Ver todas las guías →</a></p>
+  </section>
+
   <section class="seccion llamado">
     <h2>¿Tenés una propiedad para alquilar?</h2>
     <p>Publicar es gratis: creás tu cuenta en un minuto, tu aviso aparece en Google y te contactan directo por WhatsApp.</p>

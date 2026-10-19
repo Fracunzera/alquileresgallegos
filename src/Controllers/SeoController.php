@@ -8,12 +8,13 @@ use App\Catalogo;
 use App\Db;
 use App\Repositories\AvisoRepo;
 use App\Repositories\BarrioRepo;
+use App\Seo\Guias;
 use App\Seo\Landings;
 
 final class SeoController
 {
     /**
-     * Sitemap dinámico: home, landings con avisos, barrios con avisos, inmobiliarias con avisos
+     * Sitemap dinámico: home, guías, landings con avisos, barrios con avisos, inmobiliarias con avisos
      * y cada aviso activo con sus fotos (extensión de imágenes para Google Imágenes).
      */
     public function sitemap(): string
@@ -29,6 +30,11 @@ final class SeoController
         $ultimo = (string) Db::valor("SELECT MAX(actualizado_en) FROM avisos WHERE estado = 'activo'");
         $urls[] = ['loc' => '/', 'lastmod' => $ultimo];
 
+        // Las guías no dependen de los avisos: siempre van.
+        $urls[] = ['loc' => '/guias', 'lastmod' => Guias::REVISADAS_EL];
+        foreach (array_keys(Guias::todas()) as $slug) {
+            $urls[] = ['loc' => Guias::url($slug), 'lastmod' => Guias::REVISADAS_EL];
+        }
         foreach (Landings::fijas() as $path => $landing) {
             if ($avisos->estadisticas($landing['filtro'])['total'] > 0) {
                 $urls[] = ['loc' => $path, 'lastmod' => $ultimo];

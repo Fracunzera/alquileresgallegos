@@ -132,6 +132,24 @@ final class JsonLd
     }
 
     /** @return array<string, mixed> */
+    /** Guía o artículo de contenido propio. */
+    public static function articulo(string $titulo, string $descripcion, string $path, string $modificado): array
+    {
+        $editor = ['@type' => 'Organization', 'name' => app_nombre(), 'url' => url_abs('/')];
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $titulo,
+            'description' => $descripcion,
+            'url' => url_abs($path),
+            'mainEntityOfPage' => url_abs($path),
+            'inLanguage' => 'es-AR',
+            'dateModified' => $modificado,
+            'author' => $editor,
+            'publisher' => $editor,
+        ];
+    }
+
     public static function sitio(): array
     {
         return [
